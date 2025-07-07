@@ -50,72 +50,72 @@ const LegalCaseListView = ({ cases, onEdit }: LegalCaseListViewProps) => {
     <div className="bg-white rounded-lg shadow-sm border">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Dossier</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead>Avocat</TableHead>
-            <TableHead>Statut</TableHead>
-            <TableHead>Priorité</TableHead>
-            <TableHead>Prochaine audience</TableHead>
-            <TableHead>Créé le</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="h-10">
+            <TableHead className="py-2 px-3 text-xs font-medium">Dossier</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Client</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Avocat</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Statut</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Priorité</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Prochaine audience</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Créé le</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {cases.map((legalCase) => (
-            <TableRow key={legalCase.id} className="hover:bg-gray-50">
-              <TableCell>
+            <TableRow key={legalCase.id} className="hover:bg-gray-50 h-12">
+              <TableCell className="py-2 px-3">
                 <div>
-                  <div className="font-semibold text-gray-900">{legalCase.title}</div>
-                  <div className="text-sm text-gray-600">N° {legalCase.caseNumber}</div>
+                  <div className="font-medium text-gray-900 text-sm leading-tight">{legalCase.title}</div>
+                  <div className="text-xs text-gray-500">N° {legalCase.caseNumber}</div>
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm">{legalCase.client}</span>
+              <TableCell className="py-2 px-3">
+                <div className="flex items-center gap-1">
+                  <User className="h-3 w-3 text-blue-600" />
+                  <span className="text-xs">{legalCase.client}</span>
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm">{legalCase.lawyer}</span>
+              <TableCell className="py-2 px-3">
+                <div className="flex items-center gap-1">
+                  <FileText className="h-3 w-3 text-blue-600" />
+                  <span className="text-xs">{legalCase.lawyer}</span>
                 </div>
               </TableCell>
-              <TableCell>
-                <Badge className={getStatusColor(legalCase.status)}>
+              <TableCell className="py-2 px-3">
+                <Badge className={`${getStatusColor(legalCase.status)} text-xs px-2 py-0.5`}>
                   {legalCase.status}
                 </Badge>
               </TableCell>
-              <TableCell>
-                <Badge className={getPriorityColor(legalCase.priority)}>
+              <TableCell className="py-2 px-3">
+                <Badge className={`${getPriorityColor(legalCase.priority)} text-xs px-2 py-0.5`}>
                   {legalCase.priority}
                 </Badge>
               </TableCell>
-              <TableCell>
+              <TableCell className="py-2 px-3">
                 {legalCase.nextHearing ? (
-                  <div className="flex items-center gap-2 text-sm">
-                    <AlertCircle className="h-4 w-4 text-blue-600" />
+                  <div className="flex items-center gap-1 text-xs">
+                    <AlertCircle className="h-3 w-3 text-blue-600" />
                     {new Date(legalCase.nextHearing).toLocaleDateString('fr-FR')}
                   </div>
                 ) : (
-                  <span className="text-gray-400 text-sm">-</span>
+                  <span className="text-gray-400 text-xs">-</span>
                 )}
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1 text-sm text-gray-600">
+              <TableCell className="py-2 px-3">
+                <div className="flex items-center gap-1 text-xs text-gray-600">
                   <Calendar className="h-3 w-3" />
                   {new Date(legalCase.createdDate).toLocaleDateString('fr-FR')}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="py-2 px-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onEdit(legalCase.id)}
-                  className="h-8"
+                  className="h-7 px-2 text-xs"
                 >
-                  <Eye className="h-4 w-4 mr-1" />
+                  <Eye className="h-3 w-3 mr-1" />
                   Voir
                 </Button>
               </TableCell>
