@@ -1,12 +1,13 @@
 
 import { useState } from 'react';
-import { Search, Plus, Filter, Scale } from 'lucide-react';
+import { Search, Plus, Filter, Scale, Hash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LegalCase, CaseStatus } from '@/types/legalCase';
 import LegalCaseCard from './LegalCaseCard';
 import AddCaseForm from './AddCaseForm';
+import { useNavigate } from 'react-router-dom';
 
 interface LegalCaseListProps {
   cases: LegalCase[];
@@ -18,6 +19,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const navigate = useNavigate();
 
   const filteredCases = cases.filter(legalCase => {
     const matchesSearch = legalCase.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,10 +71,20 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
                 <p className="text-sm text-gray-600">Gestion des affaires en cours</p>
               </div>
             </div>
-            <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau dossier
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/case-numbers')}
+                className="bg-gray-50 hover:bg-gray-100"
+              >
+                <Hash className="h-4 w-4 mr-2" />
+                Numéros de dossier
+              </Button>
+              <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau dossier
+              </Button>
+            </div>
           </div>
         </div>
       </div>
