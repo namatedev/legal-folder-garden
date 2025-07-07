@@ -1,11 +1,11 @@
-
 import { useState } from 'react';
-import { Search, Plus, Filter, Scale, Hash } from 'lucide-react';
+import { Search, Plus, Filter, Scale, Hash, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LegalCase, CaseStatus } from '@/types/legalCase';
 import LegalCaseCard from './LegalCaseCard';
+import LegalCaseListView from './LegalCaseListView';
 import AddCaseForm from './AddCaseForm';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const navigate = useNavigate();
 
   const filteredCases = cases.filter(legalCase => {
@@ -150,23 +151,45 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
                 className="pl-10"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filtrer par statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="En cours">En cours</SelectItem>
-                <SelectItem value="En attente">En attente</SelectItem>
-                <SelectItem value="Terminé">Terminé</SelectItem>
-                <SelectItem value="Annulé">Annulé</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filtrer par statut" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
+                  <SelectItem value="En cours">En cours</SelectItem>
+                  <SelectItem value="En attente">En attente</SelectItem>
+                  <SelectItem value="Terminé">Terminé</SelectItem>
+                  <SelectItem value="Annulé">Annulé</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {/* View Mode Toggle */}
+              <div className="flex border rounded-lg bg-white">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-r-none border-r"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-l-none"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Cases Grid */}
+        {/* Cases Display */}
         {filteredCases.length === 0 ? (
           <div className="bg-white p-12 rounded-lg shadow-sm border text-center">
             <Scale className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -186,7 +209,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
               </Button>
             )}
           </div>
-        ) : (
+        ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCases.map((legalCase) => (
               <LegalCaseCard
@@ -196,6 +219,8 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
               />
             ))}
           </div>
+        ) : (
+          <LegalCaseListView cases={filteredCases} onEdit={onEditCase} />
         )}
       </div>
     </div>
