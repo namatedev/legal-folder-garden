@@ -1,23 +1,11 @@
-/**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
- * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
- */
-
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-
-import api from './common/services/liferay/api.js';
-import {Liferay} from './common/services/liferay/liferay.js';
-
-import AppComponent from './AppComponent.js';
-
-import './common/styles/index.scss';
 
 const App = ({route}) => {
 	
 	return (
 		<div>
-			<AppComponent />
+			HELLO HI 4
 		</div>
 	);
 };
@@ -66,7 +54,7 @@ class WebComponent extends HTMLElement {
 	}
 }
 
-const ELEMENT_ID = 'cet-min-dossiers';
+const ELEMENT_ID = 'lr-250708-cet';
 
 if (!customElements.get(ELEMENT_ID)) {
 	customElements.define(ELEMENT_ID, WebComponent);

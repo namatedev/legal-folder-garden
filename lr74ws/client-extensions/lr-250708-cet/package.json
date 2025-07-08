@@ -30,7 +30,7 @@
 		"react-scripts": "5.0.1",
 		"sass": "^1.66.1"
 	},
-	"name": "@liferay/cet-min-dossiers",
+	"name": "@liferay/liferay-sample-custom-element-2",
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",

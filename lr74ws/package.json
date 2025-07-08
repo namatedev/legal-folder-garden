@@ -2,8 +2,7 @@
     "private": true,
     "workspaces": {
         "packages": [
-            "client-extensions\\cet-2",
-            "client-extensions\\cet-min-dossiers"
+            "client-extensions\\lr-250708-cet"
         ]
     }
 }

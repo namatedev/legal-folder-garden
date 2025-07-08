@@ -1,13 +1,11 @@
 assemble:
     - from: build/static
       into: static
-cet-min-dossiers:
-    cssURLs:
-        - css/main.*.css
-    friendlyURLMapping: cet-min-dossiers
-    htmlElementName: cet-min-dossiers
+lr-250708-cet:
+    friendlyURLMapping: lr-250708-cet
+    htmlElementName: lr-250708-cet
     instanceable: false
-    name: LR CET
+    name: LR 250708 CET
     portletCategoryName: category.client-extensions
     type: customElement
     urls:
