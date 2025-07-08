@@ -1,0 +1,15 @@
+assemble:
+    - from: build/static
+      into: static
+cet-min-dossiers:
+    cssURLs:
+        - css/main.*.css
+    friendlyURLMapping: cet-min-dossiers
+    htmlElementName: cet-min-dossiers
+    instanceable: false
+    name: LR CET
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - js/main.*.js
+    useESM: true

@@ -1,0 +1,59 @@
+Arguments: 
+  C:\nmt\lr74ws\build\node\node.exe C:\nmt\lr74ws\build\node\node_modules\yarn\yarn-1.13.0.js --production false install --ignore-engines
+
+PATH: 
+  C:\nmt\lr74ws\build\node;C:\Program Files\Zulu\zulu-11\bin\;C:\Program Files\Microsoft\jdk-21.0.5.11-hotspot\bin;C:\Program Files\Eclipse Adoptium\jdk-11.0.25.9-hotspot\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\Microsoft\jdk-11.0.19.7-hotspot\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Program Files (x86)\Bitvise SSH Client;C:\Users\yahia\.jpm\windows\bin;C:\Users\yahia\miniconda3;C:\Users\yahia\miniconda3\Library\mingw-w64\bin;C:\Users\yahia\miniconda3\Library\usr\bin;C:\Users\yahia\miniconda3\Library\bin;C:\Users\yahia\miniconda3\Scripts;C:\Users\yahia\AppData\Local\Programs\Python\Launcher\;C:\Users\yahia\AppData\Local\Microsoft\WindowsApps;C:\Users\yahia\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\yahia\AppData\Roaming\npm;C:\oc;C:\Users\yahia\AppData\Local\Programs\Python\Python312\Scripts;C:\apache-maven-3.9.9\bin;C:\Users\yahia\AppData\Local\slack-cli\bin;C:\Users\yahia\.deno\bin;C:\Users\yahia\AppData\Local\Microsoft\WinGet\Packages\jqlang.jq_Microsoft.Winget.Source_8wekyb3d8bbwe;
+
+Yarn version: 
+  1.13.0
+
+Node version: 
+  20.12.2
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (C:\nmt\lr74ws\build\node\node_modules\yarn\yarn-1.13.0.js:124525:19)
+      at Object.onceWrapper (node:events:632:28)
+      at ClientRequest.emit (node:events:518:28)
+      at TLSSocket.emitRequestTimeout (node:_http_client:845:9)
+      at Object.onceWrapper (node:events:632:28)
+      at TLSSocket.emit (node:events:530:35)
+      at Socket._onTimeout (node:net:589:8)
+      at listOnTimeout (node:internal/timers:573:17)
+      at process.processTimers (node:internal/timers:514:7)
+
+npm manifest: 
+  {
+      "private": true,
+      "workspaces": {
+          "packages": [
+              "client-extensions\\liferay-sample-commerce-checkout-step",
+              "client-extensions\\liferay-sample-custom-element-1",
+              "client-extensions\\liferay-sample-custom-element-2",
+              "client-extensions\\liferay-sample-custom-element-3",
+              "client-extensions\\liferay-sample-custom-element-4",
+              "client-extensions\\liferay-sample-custom-element-5",
+              "client-extensions\\liferay-sample-editor-config-contributor",
+              "client-extensions\\liferay-sample-etc-frontend",
+              "client-extensions\\liferay-sample-etc-node",
+              "client-extensions\\liferay-sample-fds-cell-renderer",
+              "client-extensions\\liferay-sample-fds-filter",
+              "client-extensions\\liferay-sample-global-css",
+              "client-extensions\\liferay-sample-global-js-1",
+              "client-extensions\\liferay-sample-global-js-2",
+              "client-extensions\\liferay-sample-js-import-maps-entry",
+              "client-extensions\\liferay-sample-theme-css-1",
+              "client-extensions\\liferay-sample-theme-css-2",
+              "client-extensions\\liferay-sample-theme-spritemap-2"
+          ]
+      }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
