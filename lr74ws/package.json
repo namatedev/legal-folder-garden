@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "workspaces": {
+        "packages": [
+            "client-extensions\\lr-250708-cet"
+        ]
+    }
+}

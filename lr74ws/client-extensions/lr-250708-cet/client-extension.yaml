@@ -1,0 +1,13 @@
+assemble:
+    - from: build/static
+      into: static
+lr-250708-cet:
+    friendlyURLMapping: lr-250708-cet
+    htmlElementName: lr-250708-cet
+    instanceable: false
+    name: LR 250708 CET
+    portletCategoryName: category.client-extensions
+    type: customElement
+    urls:
+        - js/main.*.js
+    useESM: true
