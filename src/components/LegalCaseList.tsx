@@ -68,7 +68,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
                 <Scale className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Dossiers Juridiques</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Dossiers Juridiques / Web Juris</h1>
                 <p className="text-sm text-gray-600">Gestion des affaires en cours</p>
               </div>
             </div>
