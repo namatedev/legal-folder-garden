@@ -2,10 +2,10 @@
 import { Scale, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CaseNumberManager from '@/components/CaseNumberManager';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 const CaseNumbers = () => {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,7 +17,7 @@ const CaseNumbers = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/')}
+                onClick={() => setLocation('/')}
                 className="mr-2"
               >
                 <ArrowLeft className="h-4 w-4" />

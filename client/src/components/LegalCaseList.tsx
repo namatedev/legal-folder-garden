@@ -7,7 +7,7 @@ import { LegalCase, CaseStatus } from '@/types/legalCase';
 import LegalCaseCard from './LegalCaseCard';
 import LegalCaseListView from './LegalCaseListView';
 import AddCaseForm from './AddCaseForm';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 interface LegalCaseListProps {
   cases: LegalCase[];
@@ -21,7 +21,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
 
   const filteredCases = cases.filter(legalCase => {
     const matchesSearch = legalCase.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,7 +77,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
             <div className="flex gap-2">
               <Button 
                 variant="outline"
-                onClick={() => navigate('/case-numbers')}
+                onClick={() => setLocation('/case-numbers')}
                 className="bg-gray-50 hover:bg-gray-100"
               >
                 <Hash className="h-4 w-4 mr-2" />
