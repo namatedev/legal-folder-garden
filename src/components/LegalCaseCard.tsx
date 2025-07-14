@@ -1,15 +1,28 @@
 
-import { Calendar, User, FileText, AlertCircle } from 'lucide-react';
+import { Calendar, User, FileText, AlertCircle, Trash2, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { LegalCase } from '@/types/legalCase';
 
 interface LegalCaseCardProps {
   legalCase: LegalCase;
   onEdit: (caseId: string) => void;
+  onDelete?: (caseId: string) => void;
 }
 
-const LegalCaseCard = ({ legalCase, onEdit }: LegalCaseCardProps) => {
+const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'En cours':
@@ -39,7 +52,7 @@ const LegalCaseCard = ({ legalCase, onEdit }: LegalCaseCardProps) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer border-l-4 border-l-blue-600" onClick={() => onEdit(legalCase.id)}>
+    <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-l-blue-600">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-1">
@@ -95,6 +108,51 @@ const LegalCaseCard = ({ legalCase, onEdit }: LegalCaseCardProps) => {
           <div>
             Mis à jour le {new Date(legalCase.lastUpdate).toLocaleDateString('fr-FR')}
           </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(legalCase.id)}
+            className="flex-1"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Voir
+          </Button>
+          
+          {onDelete && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Supprimer le dossier</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Êtes-vous sûr de vouloir supprimer le dossier "{legalCase.title}" ? 
+                    Cette action est irréversible.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={() => onDelete(legalCase.id)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Supprimer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,7 +1,17 @@
-
-import { Calendar, User, FileText, AlertCircle, Eye } from 'lucide-react';
+import { Calendar, User, FileText, AlertCircle, Eye, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import {
   Table,
   TableBody,
@@ -15,9 +25,10 @@ import { LegalCase } from '@/types/legalCase';
 interface LegalCaseListViewProps {
   cases: LegalCase[];
   onEdit: (caseId: string) => void;
+  onDelete?: (caseId: string) => void;
 }
 
-const LegalCaseListView = ({ cases, onEdit }: LegalCaseListViewProps) => {
+const LegalCaseListView = ({ cases, onEdit, onDelete }: LegalCaseListViewProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'En cours':
@@ -109,15 +120,49 @@ const LegalCaseListView = ({ cases, onEdit }: LegalCaseListViewProps) => {
                 </div>
               </TableCell>
               <TableCell className="py-2 px-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onEdit(legalCase.id)}
-                  className="h-7 px-2 text-xs"
-                >
-                  <Eye className="h-3 w-3 mr-1" />
-                  Voir
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onEdit(legalCase.id)}
+                    className="h-7 px-2 text-xs"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Voir
+                  </Button>
+                  
+                  {onDelete && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Supprimer le dossier</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir supprimer le dossier "{legalCase.title}" ? 
+                            Cette action est irréversible.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => onDelete(legalCase.id)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Supprimer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </div>
               </TableCell>
             </TableRow>
           ))}

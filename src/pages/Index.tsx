@@ -82,11 +82,20 @@ const Index = () => {
     }
   };
 
+  const handleDeleteCase = (caseId: string) => {
+    const selectedCase = cases.find(c => c.id === caseId);
+    if (selectedCase) {
+      setCases(prev => prev.filter(c => c.id !== caseId));
+      toast.success(`Dossier "${selectedCase.title}" supprimé avec succès`);
+    }
+  };
+
   return (
     <LegalCaseList
       cases={cases}
       onAddCase={handleAddCase}
       onEditCase={handleEditCase}
+      onDeleteCase={handleDeleteCase}
     />
   );
 };

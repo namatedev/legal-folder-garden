@@ -13,9 +13,10 @@ interface LegalCaseListProps {
   cases: LegalCase[];
   onAddCase: (caseData: Omit<LegalCase, 'id'>) => void;
   onEditCase: (caseId: string) => void;
+  onDeleteCase?: (caseId: string) => void;
 }
 
-const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => {
+const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCaseListProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -166,7 +167,6 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
                 </SelectContent>
               </Select>
               
-              {/* View Mode Toggle */}
               <div className="flex border rounded-lg bg-white">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -216,11 +216,16 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase }: LegalCaseListProps) => 
                 key={legalCase.id}
                 legalCase={legalCase}
                 onEdit={onEditCase}
+                onDelete={onDeleteCase}
               />
             ))}
           </div>
         ) : (
-          <LegalCaseListView cases={filteredCases} onEdit={onEditCase} />
+          <LegalCaseListView 
+            cases={filteredCases} 
+            onEdit={onEditCase}
+            onDelete={onDeleteCase}
+          />
         )}
       </div>
     </div>
