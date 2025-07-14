@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { LegalCase } from '@/types/legalCase';
@@ -57,6 +58,32 @@ const sampleCases: LegalCase[] = [
     lawyer: 'Me. Antoine Blanc',
     court: 'Tribunal Correctionnel de Marseille',
     nextHearing: '2024-03-10T14:00:00Z'
+  },
+  {
+    id: '5',
+    title: 'Conflit du travail - Licenciement abusif',
+    client: 'Ahmed Benali',
+    caseNumber: '2024/1501/001',
+    status: 'En cours',
+    priority: 'Haute',
+    createdDate: '2024-01-05T09:00:00Z',
+    lastUpdate: '2024-01-28T11:00:00Z',
+    description: 'Contentieux prud\'homal pour licenciement sans cause réelle et sérieuse. Demande de réintégration et dommages-intérêts.',
+    lawyer: 'Me. Fatima Zahra',
+    court: 'Conseil de Prud\'hommes',
+    nextHearing: '2024-02-20T10:00:00Z'
+  },
+  {
+    id: '6',
+    title: 'Litige foncier - Propriété terrain',
+    client: 'Hassan Alami',
+    caseNumber: '2023/1507/002',
+    status: 'Terminé',
+    priority: 'Moyenne',
+    createdDate: '2023-11-15T14:00:00Z',
+    lastUpdate: '2024-01-15T16:30:00Z',
+    description: 'Conflit de propriété sur un terrain agricole. Résolution par transaction amiable.',
+    lawyer: 'Me. Youssef Idrissi'
   }
 ];
 
