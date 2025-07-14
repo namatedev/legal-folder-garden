@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LegalCase, CaseStatus, CasePriority } from '@/types/legalCase';
-import { NOMENCLATURES, getNextCaseNumber } from '@/config/nomenclature';
+import { NOMENCLATURES } from '@/config/nomenclature';
 
 interface AddCaseFormProps {
   onAddCase: (caseData: Omit<LegalCase, 'id'>) => void;
@@ -19,8 +20,9 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
   const [formData, setFormData] = useState({
     title: '',
     client: '',
-    caseNumber: '',
+    year: new Date().getFullYear().toString(),
     nomenclatureCode: '',
+    incrementalNumber: '',
     status: 'En cours' as CaseStatus,
     priority: 'Moyenne' as CasePriority,
     description: '',
@@ -29,13 +31,11 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
     nextHearing: ''
   });
 
-  const handleNomenclatureChange = (code: string) => {
-    const newCaseNumber = getNextCaseNumber(code, existingCases);
-    setFormData(prev => ({
-      ...prev,
-      nomenclatureCode: code,
-      caseNumber: newCaseNumber
-    }));
+  const generateCaseNumber = () => {
+    if (formData.year && formData.nomenclatureCode && formData.incrementalNumber) {
+      return `${formData.year}/${formData.nomenclatureCode}/${formData.incrementalNumber.padStart(3, '0')}`;
+    }
+    return '';
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,10 +46,24 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       return;
     }
 
+    if (!formData.year || !formData.incrementalNumber) {
+      alert('Veuillez remplir l\'année et le numéro de dossier');
+      return;
+    }
+
+    const caseNumber = generateCaseNumber();
+
+    // Vérifier si le numéro de dossier existe déjà
+    const existingCase = existingCases.find(c => c.caseNumber === caseNumber);
+    if (existingCase) {
+      alert('Ce numéro de dossier existe déjà. Veuillez choisir un autre numéro.');
+      return;
+    }
+
     const newCase: Omit<LegalCase, 'id'> = {
       title: formData.title,
       client: formData.client,
-      caseNumber: formData.caseNumber,
+      caseNumber: caseNumber,
       status: formData.status,
       priority: formData.priority,
       description: formData.description,
@@ -71,6 +85,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
   };
 
   const selectedNomenclature = NOMENCLATURES.find(n => n.code === formData.nomenclatureCode);
+  const previewCaseNumber = generateCaseNumber();
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -99,7 +114,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
             </div>
             <div className="space-y-2">
               <Label htmlFor="nomenclature">Nomenclature *</Label>
-              <Select value={formData.nomenclatureCode} onValueChange={handleNomenclatureChange}>
+              <Select value={formData.nomenclatureCode} onValueChange={(value) => handleChange('nomenclatureCode', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner la nomenclature" />
                 </SelectTrigger>
@@ -114,12 +129,40 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
             </div>
           </div>
 
-          {formData.caseNumber && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="year">Année *</Label>
+              <Input
+                id="year"
+                type="number"
+                min="2000"
+                max="2100"
+                value={formData.year}
+                onChange={(e) => handleChange('year', e.target.value)}
+                required
+                placeholder="Ex: 2024"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="incrementalNumber">Numéro de dossier *</Label>
+              <Input
+                id="incrementalNumber"
+                type="number"
+                min="1"
+                value={formData.incrementalNumber}
+                onChange={(e) => handleChange('incrementalNumber', e.target.value)}
+                required
+                placeholder="Ex: 1, 2, 3..."
+              />
+            </div>
+          </div>
+
+          {previewCaseNumber && (
             <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-sm font-medium text-blue-900">Numéro de dossier généré</Label>
-                  <p className="text-lg font-bold text-blue-800">{formData.caseNumber}</p>
+                  <Label className="text-sm font-medium text-blue-900">Aperçu du numéro de dossier</Label>
+                  <p className="text-lg font-bold text-blue-800">{previewCaseNumber}</p>
                   {selectedNomenclature && (
                     <p className="text-xs text-blue-600">
                       {selectedNomenclature.label} ({selectedNomenclature.arabicLabel})
