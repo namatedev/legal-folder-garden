@@ -2,7 +2,17 @@
 
 ## Overview
 
-This is a full-stack legal case management application built with React, TypeScript, Express, and PostgreSQL. The application provides a comprehensive system for managing legal cases with features like case numbering, nomenclature-based categorization, and case status tracking. The frontend uses modern React patterns with shadcn/ui components and Tailwind CSS for styling, while the backend is built with Express and uses Drizzle ORM for database operations.
+This is a full-stack legal case management application built with React, TypeScript, Express, and PostgreSQL. The application provides a comprehensive system for managing legal cases with features like case numbering, nomenclature-based categorization, court assignment, and case status tracking. The frontend uses modern React patterns with shadcn/ui components and Tailwind CSS for styling, while the backend is built with Express and uses Drizzle ORM for database operations. The system includes Moroccan court hierarchy with Court of Appeal and First Instance Tribunal tracking.
+
+## Recent Changes
+
+### July 14, 2025 - Court System Integration
+- **Court of Appeal Fields**: Added court of appeal assignment for each case
+- **First Instance Tribunals**: Added first instance tribunal tracking
+- **Moroccan Court Configuration**: Added comprehensive list of Moroccan courts with Arabic names
+- **Form Updates**: Updated AddCaseForm to include court selection dropdowns
+- **Display Updates**: Updated both card and table views to show court information
+- **Routing Migration**: Migrated from react-router-dom to wouter for Replit compatibility
 
 ## User Preferences
 
@@ -103,11 +113,12 @@ Preferred communication style: Simple, everyday language.
 1. **Legal Case CRUD Operations**: Complete create, read, update, delete functionality
 2. **Case Numbering System**: Automatic generation based on nomenclature and year
 3. **Multi-language Support**: French/Arabic nomenclature labels
-4. **Responsive Design**: Mobile-first approach with Tailwind CSS
-5. **Form Validation**: Zod schemas for data validation
-6. **Toast Notifications**: User feedback system
-7. **Search and Filtering**: Case search and status filtering
-8. **View Modes**: Grid and table view options
+4. **Court System Integration**: Court of Appeal and First Instance Tribunal fields
+5. **Responsive Design**: Mobile-first approach with Tailwind CSS
+6. **Form Validation**: Zod schemas for data validation
+7. **Toast Notifications**: User feedback system
+8. **Search and Filtering**: Case search and status filtering
+9. **View Modes**: Grid and table view options
 
 ### Database Schema
 - **Users Table**: Basic user management with username/password

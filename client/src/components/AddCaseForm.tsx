@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LegalCase, CaseStatus, CasePriority } from '@/types/legalCase';
 import { NOMENCLATURES } from '@/config/nomenclature';
+import { COURTS_OF_APPEAL, FIRST_INSTANCE_TRIBUNALS, getTribunalsByCourtOfAppeal, getCourtOfAppealById } from '@/config/courts';
 
 interface AddCaseFormProps {
   onAddCase: (caseData: Omit<LegalCase, 'id'>) => void;
@@ -28,6 +29,8 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
     description: '',
     lawyer: '',
     court: '',
+    courtOfAppeal: '',
+    firstInstanceTribunal: '',
     nextHearing: ''
   });
 
@@ -69,6 +72,8 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       description: formData.description,
       lawyer: formData.lawyer,
       court: formData.court || undefined,
+      courtOfAppeal: formData.courtOfAppeal || undefined,
+      firstInstanceTribunal: formData.firstInstanceTribunal || undefined,
       nextHearing: formData.nextHearing || undefined,
       createdDate: new Date().toISOString(),
       lastUpdate: new Date().toISOString()
@@ -235,13 +240,54 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="courtOfAppeal">Cour d'Appel *</Label>
+              <Select value={formData.courtOfAppeal} onValueChange={(value) => {
+                handleChange('courtOfAppeal', value);
+                // Reset first instance tribunal when court of appeal changes
+                handleChange('firstInstanceTribunal', '');
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner la cour d'appel" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COURTS_OF_APPEAL.map((court) => (
+                    <SelectItem key={court.id} value={court.id}>
+                      {court.arabicName} - {court.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="firstInstanceTribunal">Tribunal de 1ère Instance</Label>
+              <Select 
+                value={formData.firstInstanceTribunal} 
+                onValueChange={(value) => handleChange('firstInstanceTribunal', value)}
+                disabled={!formData.courtOfAppeal}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner le tribunal" />
+                </SelectTrigger>
+                <SelectContent>
+                  {formData.courtOfAppeal && getTribunalsByCourtOfAppeal(formData.courtOfAppeal).map((tribunal) => (
+                    <SelectItem key={tribunal.id} value={tribunal.id}>
+                      {tribunal.arabicName} - {tribunal.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="court">Tribunal</Label>
+            <Label htmlFor="court">Tribunal (description libre)</Label>
             <Input
               id="court"
               value={formData.court}
               onChange={(e) => handleChange('court', e.target.value)}
-              placeholder="Ex: Tribunal de Grande Instance de Paris"
+              placeholder="Ex: Tribunal de Commerce, Conseil de Prud'hommes..."
             />
           </div>
 

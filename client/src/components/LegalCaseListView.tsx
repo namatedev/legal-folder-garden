@@ -21,6 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { LegalCase } from '@/types/legalCase';
+import { getCourtOfAppealById, getFirstInstanceTribunalById } from '@/config/courts';
 
 interface LegalCaseListViewProps {
   cases: LegalCase[];
@@ -65,10 +66,10 @@ const LegalCaseListView = ({ cases, onEdit, onDelete }: LegalCaseListViewProps) 
             <TableHead className="py-2 px-3 text-xs font-medium">Dossier</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Client</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Avocat</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Cour d'Appel</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Statut</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Priorité</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Prochaine audience</TableHead>
-            <TableHead className="py-2 px-3 text-xs font-medium">Créé le</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -91,6 +92,23 @@ const LegalCaseListView = ({ cases, onEdit, onDelete }: LegalCaseListViewProps) 
                 <div className="flex items-center gap-1">
                   <FileText className="h-3 w-3 text-blue-600" />
                   <span className="text-xs">{legalCase.lawyer}</span>
+                </div>
+              </TableCell>
+              <TableCell className="py-2 px-3">
+                <div className="text-xs text-gray-600">
+                  {legalCase.courtOfAppeal && (
+                    <div className="text-right" style={{ direction: 'rtl' }}>
+                      {getCourtOfAppealById(legalCase.courtOfAppeal)?.arabicName || legalCase.courtOfAppeal}
+                    </div>
+                  )}
+                  {legalCase.firstInstanceTribunal && (
+                    <div className="text-gray-500 text-xs mt-1" style={{ direction: 'rtl' }}>
+                      {getFirstInstanceTribunalById(legalCase.firstInstanceTribunal)?.arabicName || legalCase.firstInstanceTribunal}
+                    </div>
+                  )}
+                  {!legalCase.courtOfAppeal && !legalCase.firstInstanceTribunal && (
+                    <span className="text-gray-400">-</span>
+                  )}
                 </div>
               </TableCell>
               <TableCell className="py-2 px-3">
