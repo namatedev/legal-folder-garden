@@ -53,6 +53,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
         <AddCaseForm
           onAddCase={handleAddCase}
           onCancel={() => setShowAddForm(false)}
+          existingCases={cases}
         />
       </div>
     );

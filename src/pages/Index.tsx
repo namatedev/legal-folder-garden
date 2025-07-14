@@ -1,16 +1,15 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { LegalCase } from '@/types/legalCase';
 import LegalCaseList from '@/components/LegalCaseList';
 
-// Données d'exemple
+// Données d'exemple avec le nouveau format de numérotation
 const sampleCases: LegalCase[] = [
   {
     id: '1',
     title: 'Affaire de divorce Martin vs Dupont',
     client: 'Marie Martin',
-    caseNumber: '2024-001',
+    caseNumber: '2024/1504/001',
     status: 'En cours',
     priority: 'Haute',
     createdDate: '2024-01-15T10:00:00Z',
@@ -24,7 +23,7 @@ const sampleCases: LegalCase[] = [
     id: '2',
     title: 'Litige commercial TechCorp vs StartupXYZ',
     client: 'TechCorp SARL',
-    caseNumber: '2024-002',
+    caseNumber: '2024/1503/001',
     status: 'En cours',
     priority: 'Moyenne',
     createdDate: '2024-01-10T11:00:00Z',
@@ -37,7 +36,7 @@ const sampleCases: LegalCase[] = [
     id: '3',
     title: 'Succession de Mme Leclerc',
     client: 'Famille Leclerc',
-    caseNumber: '2024-003',
+    caseNumber: '2023/1508/001',
     status: 'Terminé',
     priority: 'Basse',
     createdDate: '2023-12-01T09:00:00Z',
@@ -49,7 +48,7 @@ const sampleCases: LegalCase[] = [
     id: '4',
     title: 'Défense pénale - Affaire Roussel',
     client: 'Pierre Roussel',
-    caseNumber: '2024-004',
+    caseNumber: '2024/1505/001',
     status: 'En attente',
     priority: 'Haute',
     createdDate: '2024-01-22T08:00:00Z',

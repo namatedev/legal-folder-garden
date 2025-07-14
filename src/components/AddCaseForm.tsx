@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,17 +7,20 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LegalCase, CaseStatus, CasePriority } from '@/types/legalCase';
+import { NOMENCLATURES, getNextCaseNumber } from '@/config/nomenclature';
 
 interface AddCaseFormProps {
   onAddCase: (caseData: Omit<LegalCase, 'id'>) => void;
   onCancel: () => void;
+  existingCases: LegalCase[];
 }
 
-const AddCaseForm = ({ onAddCase, onCancel }: AddCaseFormProps) => {
+const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) => {
   const [formData, setFormData] = useState({
     title: '',
     client: '',
     caseNumber: '',
+    nomenclatureCode: '',
     status: 'En cours' as CaseStatus,
     priority: 'Moyenne' as CasePriority,
     description: '',
@@ -27,15 +29,35 @@ const AddCaseForm = ({ onAddCase, onCancel }: AddCaseFormProps) => {
     nextHearing: ''
   });
 
+  const handleNomenclatureChange = (code: string) => {
+    const newCaseNumber = getNextCaseNumber(code, existingCases);
+    setFormData(prev => ({
+      ...prev,
+      nomenclatureCode: code,
+      caseNumber: newCaseNumber
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!formData.nomenclatureCode) {
+      alert('Veuillez sélectionner une nomenclature');
+      return;
+    }
+
     const newCase: Omit<LegalCase, 'id'> = {
-      ...formData,
-      createdDate: new Date().toISOString(),
-      lastUpdate: new Date().toISOString(),
+      title: formData.title,
+      client: formData.client,
+      caseNumber: formData.caseNumber,
+      status: formData.status,
+      priority: formData.priority,
+      description: formData.description,
+      lawyer: formData.lawyer,
       court: formData.court || undefined,
-      nextHearing: formData.nextHearing || undefined
+      nextHearing: formData.nextHearing || undefined,
+      createdDate: new Date().toISOString(),
+      lastUpdate: new Date().toISOString()
     };
 
     onAddCase(newCase);
@@ -47,6 +69,8 @@ const AddCaseForm = ({ onAddCase, onCancel }: AddCaseFormProps) => {
       [field]: value
     }));
   };
+
+  const selectedNomenclature = NOMENCLATURES.find(n => n.code === formData.nomenclatureCode);
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -74,16 +98,37 @@ const AddCaseForm = ({ onAddCase, onCancel }: AddCaseFormProps) => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="caseNumber">Numéro de dossier *</Label>
-              <Input
-                id="caseNumber"
-                value={formData.caseNumber}
-                onChange={(e) => handleChange('caseNumber', e.target.value)}
-                required
-                placeholder="Ex: 2024-001"
-              />
+              <Label htmlFor="nomenclature">Nomenclature *</Label>
+              <Select value={formData.nomenclatureCode} onValueChange={handleNomenclatureChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner la nomenclature" />
+                </SelectTrigger>
+                <SelectContent>
+                  {NOMENCLATURES.map((nomenclature) => (
+                    <SelectItem key={nomenclature.code} value={nomenclature.code}>
+                      {nomenclature.code} - {nomenclature.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
+
+          {formData.caseNumber && (
+            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-medium text-blue-900">Numéro de dossier généré</Label>
+                  <p className="text-lg font-bold text-blue-800">{formData.caseNumber}</p>
+                  {selectedNomenclature && (
+                    <p className="text-xs text-blue-600">
+                      {selectedNomenclature.label} ({selectedNomenclature.arabicLabel})
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
