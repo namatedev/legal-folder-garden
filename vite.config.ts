@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
         },
-      }
+      },
     }
   },
   plugins: [

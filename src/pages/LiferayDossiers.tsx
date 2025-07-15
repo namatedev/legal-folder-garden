@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { liferayConfig, getAuthHeaders } from '../config/liferay';
 
 interface LiferayDossier {
   [key: string]: any;
@@ -30,7 +31,15 @@ const LiferayDossiers = () => {
     try {
       const credentials = btoa('webjuris-api-service:1234');
       
-      const response = await fetch('https://keycloak-security.apps.ocp4.namategroup.com/o/headless-delivery/v1.0/sites/20121/structured-contents', {
+      const page: number = 1, pageSize: number = 20
+      const endpoint = `${liferayConfig.endpoints.dossiers}?page=${page}&pageSize=${pageSize}`;
+      console.log('Fetching dossiers from:', endpoint);
+      console.log('Using credentials:', credentials);
+      const baseUrl = import.meta.env.DEV ? '/api' : liferayConfig.baseUrl;
+      const url = `${baseUrl}${endpoint}`;
+      console.log('Full URL:', url);
+      // const response = await fetch('/o/headless-delivery/v1.0/sites/20121/structured-contents', {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Authorization': `Basic ${credentials}`,
