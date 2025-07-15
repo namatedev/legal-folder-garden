@@ -49,6 +49,11 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       return;
     }
 
+    if (!formData.courtOfAppeal) {
+      alert('Veuillez sélectionner une cour d\'appel');
+      return;
+    }
+
     if (!formData.year || !formData.incrementalNumber) {
       alert('Veuillez remplir l\'année et le numéro de dossier');
       return;
@@ -72,7 +77,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       description: formData.description,
       lawyer: formData.lawyer,
       court: formData.court || undefined,
-      courtOfAppeal: formData.courtOfAppeal || undefined,
+      courtOfAppeal: formData.courtOfAppeal,
       firstInstanceTribunal: formData.firstInstanceTribunal || undefined,
       nextHearing: formData.nextHearing || undefined,
       createdDate: new Date().toISOString(),
@@ -93,10 +98,10 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
   const previewCaseNumber = generateCaseNumber();
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-gray-900">
+          <CardTitle className="text-lg font-bold text-gray-900">
             Nouveau dossier juridique
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={onCancel}>
@@ -104,24 +109,55 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Titre du dossier *</Label>
+      <CardContent className="pt-0">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Titre et Client */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="title" className="text-sm">Titre du dossier *</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleChange('title', e.target.value)}
                 required
                 placeholder="Ex: Affaire de divorce Martin vs Dupont"
+                className="h-9"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="nomenclature">Nomenclature *</Label>
+            <div className="space-y-1">
+              <Label htmlFor="client" className="text-sm">Client *</Label>
+              <Input
+                id="client"
+                value={formData.client}
+                onChange={(e) => handleChange('client', e.target.value)}
+                required
+                placeholder="Nom du client"
+                className="h-9"
+              />
+            </div>
+          </div>
+
+          {/* Numéro de dossier */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="year" className="text-sm">Année *</Label>
+              <Input
+                id="year"
+                type="number"
+                min="2000"
+                max="2100"
+                value={formData.year}
+                onChange={(e) => handleChange('year', e.target.value)}
+                required
+                placeholder="2024"
+                className="h-9"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="nomenclature" className="text-sm">Nomenclature *</Label>
               <Select value={formData.nomenclatureCode} onValueChange={(value) => handleChange('nomenclatureCode', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner la nomenclature" />
+                <SelectTrigger className="h-9">
+                  <SelectValue placeholder="Code" />
                 </SelectTrigger>
                 <SelectContent>
                   {NOMENCLATURES.map((nomenclature) => (
@@ -132,24 +168,8 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="year">Année *</Label>
-              <Input
-                id="year"
-                type="number"
-                min="2000"
-                max="2100"
-                value={formData.year}
-                onChange={(e) => handleChange('year', e.target.value)}
-                required
-                placeholder="Ex: 2024"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="incrementalNumber">Numéro de dossier *</Label>
+            <div className="space-y-1">
+              <Label htmlFor="incrementalNumber" className="text-sm">N° dossier *</Label>
               <Input
                 id="incrementalNumber"
                 type="number"
@@ -157,56 +177,36 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                 value={formData.incrementalNumber}
                 onChange={(e) => handleChange('incrementalNumber', e.target.value)}
                 required
-                placeholder="Ex: 1, 2, 3..."
+                placeholder="001"
+                className="h-9"
               />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-sm">Aperçu</Label>
+              <div className="h-9 flex items-center px-3 bg-blue-50 border border-blue-200 rounded text-sm font-medium text-blue-800">
+                {previewCaseNumber || 'yyyy/code/000'}
+              </div>
             </div>
           </div>
 
-          {previewCaseNumber && (
-            <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-sm font-medium text-blue-900">Aperçu du numéro de dossier</Label>
-                  <p className="text-lg font-bold text-blue-800">{previewCaseNumber}</p>
-                  {selectedNomenclature && (
-                    <p className="text-xs text-blue-600">
-                      {selectedNomenclature.label} ({selectedNomenclature.arabicLabel})
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="client">Client *</Label>
-              <Input
-                id="client"
-                value={formData.client}
-                onChange={(e) => handleChange('client', e.target.value)}
-                required
-                placeholder="Nom du client"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lawyer">Avocat responsable *</Label>
+          {/* Avocat et Statut */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="lawyer" className="text-sm">Avocat responsable *</Label>
               <Input
                 id="lawyer"
                 value={formData.lawyer}
                 onChange={(e) => handleChange('lawyer', e.target.value)}
                 required
                 placeholder="Nom de l'avocat"
+                className="h-9"
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="status">Statut</Label>
+            <div className="space-y-1">
+              <Label htmlFor="status" className="text-sm">Statut</Label>
               <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner le statut" />
+                <SelectTrigger className="h-9">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="En cours">En cours</SelectItem>
@@ -216,11 +216,11 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="priority">Priorité</Label>
+            <div className="space-y-1">
+              <Label htmlFor="priority" className="text-sm">Priorité</Label>
               <Select value={formData.priority} onValueChange={(value) => handleChange('priority', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner la priorité" />
+                <SelectTrigger className="h-9">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Haute">Haute</SelectItem>
@@ -229,26 +229,17 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="nextHearing">Prochaine audience</Label>
-              <Input
-                id="nextHearing"
-                type="date"
-                value={formData.nextHearing}
-                onChange={(e) => handleChange('nextHearing', e.target.value)}
-              />
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="courtOfAppeal">Cour d'Appel *</Label>
+          {/* Tribunaux */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="courtOfAppeal" className="text-sm">Cour d'Appel *</Label>
               <Select value={formData.courtOfAppeal} onValueChange={(value) => {
                 handleChange('courtOfAppeal', value);
-                // Reset first instance tribunal when court of appeal changes
                 handleChange('firstInstanceTribunal', '');
               }}>
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder="Sélectionner la cour d'appel" />
                 </SelectTrigger>
                 <SelectContent>
@@ -260,14 +251,14 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="firstInstanceTribunal">Tribunal de 1ère Instance</Label>
+            <div className="space-y-1">
+              <Label htmlFor="firstInstanceTribunal" className="text-sm">Tribunal de 1ère Instance</Label>
               <Select 
                 value={formData.firstInstanceTribunal} 
                 onValueChange={(value) => handleChange('firstInstanceTribunal', value)}
                 disabled={!formData.courtOfAppeal}
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-9">
                   <SelectValue placeholder="Sélectionner le tribunal" />
                 </SelectTrigger>
                 <SelectContent>
@@ -281,33 +272,50 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="court">Tribunal (description libre)</Label>
-            <Input
-              id="court"
-              value={formData.court}
-              onChange={(e) => handleChange('court', e.target.value)}
-              placeholder="Ex: Tribunal de Commerce, Conseil de Prud'hommes..."
-            />
+          {/* Tribunal libre et Audience */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="court" className="text-sm">Tribunal (description libre)</Label>
+              <Input
+                id="court"
+                value={formData.court}
+                onChange={(e) => handleChange('court', e.target.value)}
+                placeholder="Ex: Tribunal de Commerce..."
+                className="h-9"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="nextHearing" className="text-sm">Prochaine audience</Label>
+              <Input
+                id="nextHearing"
+                type="date"
+                value={formData.nextHearing}
+                onChange={(e) => handleChange('nextHearing', e.target.value)}
+                className="h-9"
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+          {/* Description */}
+          <div className="space-y-1">
+            <Label htmlFor="description" className="text-sm">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="Description détaillée du dossier..."
-              rows={3}
+              rows={2}
+              className="resize-none"
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onCancel}>
+          {/* Boutons */}
+          <div className="flex justify-end gap-2 pt-3">
+            <Button type="button" variant="outline" onClick={onCancel} size="sm">
               Annuler
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4 mr-2" />
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700" size="sm">
+              <Plus className="h-4 w-4 mr-1" />
               Créer le dossier
             </Button>
           </div>
