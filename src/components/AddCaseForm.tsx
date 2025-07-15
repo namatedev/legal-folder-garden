@@ -1,4 +1,3 @@
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -60,7 +59,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
 
   const generateCaseNumber = (year: string, nomenclatureCode: string, incrementalNumber: string) => {
     if (year && nomenclatureCode && incrementalNumber) {
-      return `${year}/${nomenclatureCode}/${incrementalNumber.padStart(3, '0')}`;
+      return `${year}/${nomenclatureCode}/${incrementalNumber}`;
     }
     return '';
   };
@@ -210,7 +209,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                         {...field}
                         type="number"
                         min="1"
-                        placeholder="001"
+                        placeholder="1"
                         className="h-8"
                       />
                     </FormControl>
@@ -221,7 +220,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
               <div className="space-y-1">
                 <Label className="text-sm">Aperçu</Label>
                 <div className="h-8 flex items-center px-3 bg-blue-50 border border-blue-200 rounded text-sm font-medium text-blue-800">
-                  {previewCaseNumber || 'yyyy/code/000'}
+                  {previewCaseNumber || 'yyyy/code/1'}
                 </div>
               </div>
             </div>

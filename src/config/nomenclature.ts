@@ -18,8 +18,7 @@ export const NOMENCLATURES: Nomenclature[] = [
 
 export const getCaseNumber = (nomenclatureCode: string, incrementalNumber: number): string => {
   const currentYear = new Date().getFullYear();
-  const formattedNumber = incrementalNumber.toString().padStart(3, '0');
-  return `${currentYear}/${nomenclatureCode}/${formattedNumber}`;
+  return `${currentYear}/${nomenclatureCode}/${incrementalNumber}`;
 };
 
 export const getNextCaseNumber = (nomenclatureCode: string, existingCases: Array<{caseNumber: string}>): string => {
