@@ -77,6 +77,14 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
             <div className="flex gap-2">
               <Button 
                 variant="outline"
+                onClick={() => navigate('/liferay-dossiers')}
+                className="bg-gray-50 hover:bg-gray-100"
+              >
+                <Hash className="h-4 w-4 mr-2" />
+                Dossiers Liferay
+              </Button>
+              <Button 
+                variant="outline"
                 onClick={() => navigate('/case-numbers')}
                 className="bg-gray-50 hover:bg-gray-100"
               >
