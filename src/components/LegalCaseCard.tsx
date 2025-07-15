@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { LegalCase } from '@/types/legalCase';
+import { getCourtOfAppealById, getFirstInstanceTribunalById } from '@/config/courts';
 
 interface LegalCaseCardProps {
   legalCase: LegalCase;
@@ -85,6 +86,25 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
               <strong>Avocat:</strong> {legalCase.lawyer}
             </span>
           </div>
+        </div>
+        
+        {/* Court Information */}
+        <div className="space-y-2">
+          {legalCase.courtOfAppeal && (
+            <div className="text-sm text-gray-600">
+              <strong>Cour d'Appel:</strong> {getCourtOfAppealById(legalCase.courtOfAppeal)?.arabicName || legalCase.courtOfAppeal}
+            </div>
+          )}
+          {legalCase.firstInstanceTribunal && (
+            <div className="text-sm text-gray-600">
+              <strong>Tribunal de 1ère Instance:</strong> {getFirstInstanceTribunalById(legalCase.firstInstanceTribunal)?.arabicName || legalCase.firstInstanceTribunal}
+            </div>
+          )}
+          {legalCase.court && (
+            <div className="text-sm text-gray-600">
+              <strong>Tribunal:</strong> {legalCase.court}
+            </div>
+          )}
         </div>
         
         {legalCase.nextHearing && (

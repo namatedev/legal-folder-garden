@@ -11,6 +11,8 @@ export interface LegalCase {
   description: string;
   lawyer: string;
   court?: string;
+  courtOfAppeal?: string;
+  firstInstanceTribunal?: string;
   nextHearing?: string;
 }
 
