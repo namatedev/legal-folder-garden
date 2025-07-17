@@ -41,7 +41,6 @@ const Index = () => {
 
   // Convert LegalDossier to LegalCase format
   const convertDossierToCase = (dossier: LegalDossier) => {
-    // Map priority to correct enum values - check both English and French values
     let mappedPriority: 'High' | 'Medium' | 'Low' = 'Medium';
     const priorityStr = String(dossier.priority || 'Medium').toLowerCase();
     if (priorityStr === 'high' || priorityStr === 'haute') {
@@ -50,7 +49,6 @@ const Index = () => {
       mappedPriority = 'Low';
     }
 
-    // Map caseType to allowed enum values
     let mappedCaseType: 'Civil' | 'Criminal' | 'Corporate' | 'Family' | 'Immigration' | 'Real Estate' = 'Civil';
     const caseTypeStr = String(dossier.caseType || 'Civil').toLowerCase();
     if (caseTypeStr.includes('criminal') || caseTypeStr.includes('pénal')) {
@@ -87,8 +85,10 @@ const Index = () => {
     };
   };
 
-  // Apply filters to original dossiers for grid view - INCLUDE LIFERAY FIELDS
+  // Apply filters to original dossiers - INCLUDE ALL LIFERAY FIELDS
   const filteredDossiers = dossiers.filter(dossier => {
+    console.log('🔍 Filtering dossier:', dossier.id, 'Search term:', searchTerm);
+    
     // Create a temporary converted case for search comparison
     const tempConverted = {
       title: dossier.title || 'Affaire de Divorce Martin',
@@ -97,7 +97,8 @@ const Index = () => {
       assignedAttorney: dossier.assignedAttorney || 'Me. Sophie Dubois'
     };
 
-    const matchesSearch = tempConverted.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = !searchTerm || 
+                         tempConverted.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tempConverted.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tempConverted.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tempConverted.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -111,6 +112,8 @@ const Index = () => {
                          dossier.libelleDernierJugemen?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || dossier.status === statusFilter;
+    
+    console.log('📊 Search result for', dossier.id, ':', { matchesSearch, matchesStatus });
     
     return matchesSearch && matchesStatus;
   });
@@ -152,6 +155,9 @@ const Index = () => {
   // Use the appropriate filtered data based on search/filter criteria
   const hasFilters = searchTerm || statusFilter !== 'all';
   const displayedCount = hasFilters ? filteredDossiers.length : dossiers.length;
+
+  console.log('📊 Filtered dossiers count:', filteredDossiers.length);
+  console.log('📊 Filtered converted cases count:', filteredConvertedCases.length);
 
   return (
     <div className="min-h-screen bg-gray-50">
