@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { LegalDossier } from '@/types/dossier';
@@ -101,7 +99,7 @@ const Index = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Apply filters to original dossiers for grid view
+  // Apply filters to original dossiers for grid view - INCLUDE LIFERAY FIELDS
   const filteredDossiers = dossiers.filter(dossier => {
     // Create a temporary converted case for search comparison
     const tempConverted = {
@@ -114,7 +112,15 @@ const Index = () => {
     const matchesSearch = tempConverted.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tempConverted.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tempConverted.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         tempConverted.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase());
+                         tempConverted.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         // Include Liferay fields in search
+                         dossier.typeRequete?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.libEntite?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.jugeRapporteur?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.juridiction2Instance?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.juridiction1Instance?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.numeroCompletDossier1Instance?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dossier.libelleDernierJugemen?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || dossier.status === statusFilter;
     
@@ -404,4 +410,3 @@ const Index = () => {
 };
 
 export default Index;
-
