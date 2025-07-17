@@ -1,13 +1,13 @@
 
 export const LIFERAY_CONFIG = {
   baseUrl: process.env.VITE_LIFERAY_BASE_URL || 'https://keycloak-security.apps.ocp4.namategroup.com',
-  objectApiPath: '/o/c/dossiertribunals',
+  objectApiPath: '/o/c/dossiers',
   username: process.env.VITE_LIFERAY_USERNAME || 'webjuris-api-service',
   password: process.env.VITE_LIFERAY_PASSWORD || '1234',
   endpoints: {
-    dossiers: '/o/c/dossiertribunals',
-    search: '/o/c/dossiertribunals',
-    filter: '/o/c/dossiertribunals'
+    dossiers: '/o/c/dossiers',
+    search: '/o/c/dossiers',
+    filter: '/o/c/dossiers'
   }
 };
 
