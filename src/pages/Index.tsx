@@ -1,4 +1,5 @@
 
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { LegalDossier } from '@/types/dossier';
@@ -88,14 +89,34 @@ const Index = () => {
     };
   });
 
-  // Apply filters to converted cases instead of raw dossiers
-  const filteredDossiers = convertedCases.filter(convertedCase => {
+  // Apply filters to converted cases
+  const filteredConvertedCases = convertedCases.filter(convertedCase => {
     const matchesSearch = convertedCase.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          convertedCase.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          convertedCase.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          convertedCase.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || convertedCase.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  // Apply filters to original dossiers for grid view
+  const filteredDossiers = dossiers.filter(dossier => {
+    // Create a temporary converted case for search comparison
+    const tempConverted = {
+      title: dossier.title || 'Affaire de Divorce Martin',
+      client: dossier.client || 'Marie Martin',
+      caseNumber: dossier.numeroCompletDossier2Instance || dossier.caseNumber,
+      assignedAttorney: dossier.assignedAttorney || 'Me. Sophie Dubois'
+    };
+
+    const matchesSearch = tempConverted.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         tempConverted.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         tempConverted.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         tempConverted.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || dossier.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
@@ -130,6 +151,10 @@ const Index = () => {
   };
 
   const statusCounts = getStatusCounts();
+
+  // Use the appropriate filtered data based on search/filter criteria
+  const hasFilters = searchTerm || statusFilter !== 'all';
+  const displayedCount = hasFilters ? filteredDossiers.length : dossiers.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -324,7 +349,7 @@ const Index = () => {
               </div>
             ))}
           </div>
-        ) : filteredDossiers.length === 0 ? (
+        ) : displayedCount === 0 ? (
           <div className="text-center py-12">
             <AlertCircle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -346,7 +371,7 @@ const Index = () => {
           <>
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                Dossiers ({filteredDossiers.length})
+                Dossiers ({displayedCount})
               </h2>
               <p className="text-gray-600">
                 Données récupérées depuis Liferay
@@ -366,7 +391,7 @@ const Index = () => {
               </div>
             ) : (
               <LegalCaseListView 
-                cases={filteredDossiers} 
+                cases={filteredConvertedCases} 
                 onEdit={handleEditCase}
                 onDelete={handleDeleteCase}
               />
@@ -379,3 +404,4 @@ const Index = () => {
 };
 
 export default Index;
+
