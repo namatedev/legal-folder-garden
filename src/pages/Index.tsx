@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { LegalDossier } from '@/types/dossier';
@@ -96,6 +95,8 @@ const Index = () => {
     lastActivity: dossier.lastActivity || new Date().toISOString(),
     documentCount: dossier.documentCount || 0,
     createdDate: dossier.dateEnregistrementDossierDansRegistre || dossier.dateOpened || new Date().toISOString(),
+    lastUpdate: dossier.lastActivity || new Date().toISOString(),
+    description: dossier.description || 'Description non disponible',
     courtOfAppeal: dossier.juridiction2Instance,
     firstInstanceTribunal: dossier.juridiction1Instance,
     nextHearing: dossier.nextHearing
