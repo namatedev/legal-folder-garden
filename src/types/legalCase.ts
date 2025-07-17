@@ -5,7 +5,7 @@ export interface LegalCase {
   client: string;
   caseNumber: string;
   status: 'En cours' | 'Terminé' | 'En attente' | 'Annulé';
-  priority: 'Haute' | 'Moyenne' | 'Basse';
+  priority: 'High' | 'Medium' | 'Low';
   createdDate: string;
   lastUpdate: string;
   description: string;
@@ -14,7 +14,12 @@ export interface LegalCase {
   courtOfAppeal?: string;
   firstInstanceTribunal?: string;
   nextHearing?: string;
+  caseType: 'Civil' | 'Criminal' | 'Corporate' | 'Family' | 'Immigration' | 'Real Estate';
+  assignedAttorney: string;
+  dateOpened: string;
+  lastActivity: string;
+  documentCount: number;
 }
 
 export type CaseStatus = 'En cours' | 'Terminé' | 'En attente' | 'Annulé';
-export type CasePriority = 'Haute' | 'Moyenne' | 'Basse';
+export type CasePriority = 'High' | 'Medium' | 'Low';

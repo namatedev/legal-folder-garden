@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, Plus, Filter, Scale, Hash, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -227,12 +228,8 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
               // Convert LegalCase to LegalDossier for compatibility
               const dossier: LegalDossier = {
                 ...legalCase,
-                caseType: legalCase.caseType as LegalDossier['caseType'],
                 status: legalCase.status as LegalDossier['status'],
-                assignedAttorney: legalCase.assignedAttorney,
-                dateOpened: legalCase.dateOpened,
-                lastActivity: legalCase.lastActivity,
-                documentCount: legalCase.documentCount || 0,
+                priority: legalCase.priority as LegalDossier['priority'],
                 typeRequete: '',
                 libEntite: '',
                 jugeRapporteur: '',
