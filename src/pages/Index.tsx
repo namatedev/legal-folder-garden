@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { LegalDossier } from '@/types/dossier';
@@ -39,49 +40,8 @@ const Index = () => {
     testConnection();
   }, []);
 
-  const filteredDossiers = dossiers.filter(dossier => {
-    const matchesSearch = dossier.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         dossier.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         dossier.numeroCompletDossier2Instance?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || dossier.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
-
-  const handleEditCase = (caseId: string) => {
-    const selectedCase = dossiers.find(c => c.id === caseId);
-    if (selectedCase) {
-      console.log('Édition du dossier:', selectedCase);
-      toast.info('Fonctionnalité d\'édition à venir');
-    }
-  };
-
-  const handleDeleteCase = async (caseId: string) => {
-    const selectedCase = dossiers.find(c => c.id === caseId);
-    if (selectedCase) {
-      try {
-        await liferayService.deleteDossier(caseId);
-        refetch();
-        toast.success(`Dossier "${selectedCase.title}" supprimé avec succès`);
-      } catch (error) {
-        toast.error('Erreur lors de la suppression du dossier');
-        console.error('Error deleting dossier:', error);
-      }
-    }
-  };
-
-  const getStatusCounts = () => {
-    return dossiers.reduce((acc, dossier) => {
-      acc[dossier.status] = (acc[dossier.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-  };
-
-  const statusCounts = getStatusCounts();
-
   // Convert LegalDossier to LegalCase format for LegalCaseListView
-  const convertedCases = filteredDossiers.map(dossier => {
+  const convertedCases = dossiers.map(dossier => {
     // Map priority to correct enum values - check both English and French values
     let mappedPriority: 'High' | 'Medium' | 'Low' = 'Medium';
     const priorityStr = String(dossier.priority || 'Medium').toLowerCase();
@@ -127,6 +87,49 @@ const Index = () => {
       nextHearing: dossier.nextHearing
     };
   });
+
+  // Apply filters to converted cases instead of raw dossiers
+  const filteredDossiers = convertedCases.filter(convertedCase => {
+    const matchesSearch = convertedCase.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         convertedCase.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         convertedCase.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         convertedCase.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || convertedCase.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleEditCase = (caseId: string) => {
+    const selectedCase = dossiers.find(c => c.id === caseId);
+    if (selectedCase) {
+      console.log('Édition du dossier:', selectedCase);
+      toast.info('Fonctionnalité d\'édition à venir');
+    }
+  };
+
+  const handleDeleteCase = async (caseId: string) => {
+    const selectedCase = dossiers.find(c => c.id === caseId);
+    if (selectedCase) {
+      try {
+        await liferayService.deleteDossier(caseId);
+        refetch();
+        toast.success(`Dossier "${selectedCase.title}" supprimé avec succès`);
+      } catch (error) {
+        toast.error('Erreur lors de la suppression du dossier');
+        console.error('Error deleting dossier:', error);
+      }
+    }
+  };
+
+  const getStatusCounts = () => {
+    return dossiers.reduce((acc, dossier) => {
+      acc[dossier.status] = (acc[dossier.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  };
+
+  const statusCounts = getStatusCounts();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -245,7 +248,7 @@ const Index = () => {
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Rechercher par titre, client ou numéro de dossier..."
+                placeholder="Rechercher par titre, client, numéro de dossier ou avocat..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -363,7 +366,7 @@ const Index = () => {
               </div>
             ) : (
               <LegalCaseListView 
-                cases={convertedCases} 
+                cases={filteredDossiers} 
                 onEdit={handleEditCase}
                 onDelete={handleDeleteCase}
               />
