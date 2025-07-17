@@ -9,6 +9,38 @@ export interface LiferayResponse<T> {
   pageSize: number;
 }
 
+// Helper function to convert dd/mm/yyyy to ISO date string
+const convertDateFromLiferay = (dateStr: string): string => {
+  if (!dateStr || dateStr.trim() === '') {
+    return new Date().toISOString();
+  }
+  
+  // Check if it's already in a valid format
+  const testDate = new Date(dateStr);
+  if (!isNaN(testDate.getTime()) && !dateStr.includes('/')) {
+    return dateStr;
+  }
+  
+  // Handle dd/mm/yyyy format
+  if (dateStr.includes('/')) {
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      // Create date in ISO format: yyyy-mm-dd
+      const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      const convertedDate = new Date(isoDate);
+      
+      if (!isNaN(convertedDate.getTime())) {
+        return convertedDate.toISOString();
+      }
+    }
+  }
+  
+  // Fallback to current date if conversion fails
+  console.warn('⚠️ Could not convert date:', dateStr, 'using current date as fallback');
+  return new Date().toISOString();
+};
+
 class LiferayService {
   private baseUrl: string;
   private authHeader: string;
@@ -57,34 +89,49 @@ class LiferayService {
       const data = await response.json();
       
       // Transform the data to match our interface
-      const transformedItems = (data.items || []).map((item: any) => ({
-        id: item.id?.toString() || Math.random().toString(),
-        caseNumber: item.numeroCompletDossier2Instance || 'N/A',
-        title: 'Affaire de Divorce Martin', // Hardcoded as requested
-        client: 'Marie Martin', // Hardcoded as requested
-        caseType: 'Family' as const,
-        status: 'Active' as const,
-        assignedAttorney: 'Me. Sophie Dubois', // Hardcoded as requested
-        dateOpened: item.dateEnregistrementDossierDansRegistre || new Date().toISOString(),
-        lastActivity: '2024-09-05', // Hardcoded as requested
-        priority: 'High' as const,
-        description: item.description || 'Description non disponible',
-        documentCount: 0,
-        nextHearing: '2024-02-15', // Hardcoded as requested
-        estimatedValue: item.estimatedValue,
-        
-        // Liferay specific fields
-        typeRequete: item.typeRequete || '',
-        libEntite: item.libEntite || '',
-        jugeRapporteur: item.jugeRapporteur || '',
-        dateEnregistrementDossierDansRegistre: item.dateEnregistrementDossierDansRegistre || '',
-        juridiction2Instance: item.juridiction2Instance || '',
-        dateDernierJugement: item.dateDernierJugement || '',
-        juridiction1Instance: item.juridiction1Instance || '',
-        numeroCompletDossier2Instance: item.numeroCompletDossier2Instance || '',
-        numeroCompletDossier1Instance: item.numeroCompletDossier1Instance || '',
-        libelleDernierJugemen: item.libelleDernierJugemen || ''
-      }));
+      const transformedItems = (data.items || []).map((item: any) => {
+        console.log('🗓️ Processing dates for dossier:', item.id, {
+          dateEnregistrementDossierDansRegistre: item.dateEnregistrementDossierDansRegistre,
+          dateDernierJugement: item.dateDernierJugement
+        });
+
+        const convertedDateEnregistrement = convertDateFromLiferay(item.dateEnregistrementDossierDansRegistre);
+        const convertedDateDernierJugement = convertDateFromLiferay(item.dateDernierJugement);
+
+        console.log('✅ Converted dates:', {
+          original: item.dateEnregistrementDossierDansRegistre,
+          converted: convertedDateEnregistrement
+        });
+
+        return {
+          id: item.id?.toString() || Math.random().toString(),
+          caseNumber: item.numeroCompletDossier2Instance || 'N/A',
+          title: 'Affaire de Divorce Martin', // Hardcoded as requested
+          client: 'Marie Martin', // Hardcoded as requested
+          caseType: 'Family' as const,
+          status: 'Active' as const,
+          assignedAttorney: 'Me. Sophie Dubois', // Hardcoded as requested
+          dateOpened: convertedDateEnregistrement,
+          lastActivity: '2024-09-05', // Hardcoded as requested
+          priority: 'High' as const,
+          description: item.description || 'Description non disponible',
+          documentCount: 0,
+          nextHearing: '2024-02-15', // Hardcoded as requested
+          estimatedValue: item.estimatedValue,
+          
+          // Liferay specific fields
+          typeRequete: item.typeRequete || '',
+          libEntite: item.libEntite || '',
+          jugeRapporteur: item.jugeRapporteur || '',
+          dateEnregistrementDossierDansRegistre: convertedDateEnregistrement,
+          juridiction2Instance: item.juridiction2Instance || '',
+          dateDernierJugement: convertedDateDernierJugement,
+          juridiction1Instance: item.juridiction1Instance || '',
+          numeroCompletDossier2Instance: item.numeroCompletDossier2Instance || '',
+          numeroCompletDossier1Instance: item.numeroCompletDossier1Instance || '',
+          libelleDernierJugemen: item.libelleDernierJugemen || ''
+        };
+      });
 
       return {
         items: transformedItems,
