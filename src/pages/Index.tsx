@@ -39,8 +39,8 @@ const Index = () => {
     testConnection();
   }, []);
 
-  // Convert LegalDossier to LegalCase format for LegalCaseListView
-  const convertedCases = dossiers.map(dossier => {
+  // Convert LegalDossier to LegalCase format
+  const convertDossierToCase = (dossier: LegalDossier) => {
     // Map priority to correct enum values - check both English and French values
     let mappedPriority: 'High' | 'Medium' | 'Low' = 'Medium';
     const priorityStr = String(dossier.priority || 'Medium').toLowerCase();
@@ -85,19 +85,7 @@ const Index = () => {
       firstInstanceTribunal: dossier.juridiction1Instance,
       nextHearing: dossier.nextHearing
     };
-  });
-
-  // Apply filters to converted cases
-  const filteredConvertedCases = convertedCases.filter(convertedCase => {
-    const matchesSearch = convertedCase.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         convertedCase.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         convertedCase.caseNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         convertedCase.assignedAttorney?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || convertedCase.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+  };
 
   // Apply filters to original dossiers for grid view - INCLUDE LIFERAY FIELDS
   const filteredDossiers = dossiers.filter(dossier => {
@@ -126,6 +114,9 @@ const Index = () => {
     
     return matchesSearch && matchesStatus;
   });
+
+  // Convert filtered dossiers to cases for list view
+  const filteredConvertedCases = filteredDossiers.map(convertDossierToCase);
 
   const handleEditCase = (caseId: string) => {
     const selectedCase = dossiers.find(c => c.id === caseId);
