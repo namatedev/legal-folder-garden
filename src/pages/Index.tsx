@@ -81,26 +81,36 @@ const Index = () => {
   const statusCounts = getStatusCounts();
 
   // Convert LegalDossier to LegalCase format for LegalCaseListView
-  const convertedCases = filteredDossiers.map(dossier => ({
-    id: dossier.id,
-    title: dossier.title || 'Affaire de Divorce Martin',
-    caseNumber: dossier.numeroCompletDossier2Instance || dossier.caseNumber,
-    client: dossier.client || 'Marie Martin',
-    lawyer: dossier.assignedAttorney || 'Me. Sophie Dubois',
-    status: dossier.status as any,
-    priority: dossier.priority === 'High' ? 'Haute' : dossier.priority === 'Medium' ? 'Moyenne' : 'Basse',
-    caseType: dossier.caseType || 'Divorce',
-    assignedAttorney: dossier.assignedAttorney || 'Me. Sophie Dubois',
-    dateOpened: dossier.dateOpened || dossier.dateEnregistrementDossierDansRegistre || new Date().toISOString(),
-    lastActivity: dossier.lastActivity || new Date().toISOString(),
-    documentCount: dossier.documentCount || 0,
-    createdDate: dossier.dateEnregistrementDossierDansRegistre || dossier.dateOpened || new Date().toISOString(),
-    lastUpdate: dossier.lastActivity || new Date().toISOString(),
-    description: dossier.description || 'Description non disponible',
-    courtOfAppeal: dossier.juridiction2Instance,
-    firstInstanceTribunal: dossier.juridiction1Instance,
-    nextHearing: dossier.nextHearing
-  }));
+  const convertedCases = filteredDossiers.map(dossier => {
+    // Map priority to correct enum values
+    let mappedPriority: 'High' | 'Medium' | 'Low' = 'Medium';
+    if (dossier.priority === 'High' || dossier.priority === 'Haute') {
+      mappedPriority = 'High';
+    } else if (dossier.priority === 'Low' || dossier.priority === 'Basse') {
+      mappedPriority = 'Low';
+    }
+
+    return {
+      id: dossier.id,
+      title: dossier.title || 'Affaire de Divorce Martin',
+      caseNumber: dossier.numeroCompletDossier2Instance || dossier.caseNumber,
+      client: dossier.client || 'Marie Martin',
+      lawyer: dossier.assignedAttorney || 'Me. Sophie Dubois',
+      status: dossier.status as any,
+      priority: mappedPriority,
+      caseType: dossier.caseType || 'Divorce',
+      assignedAttorney: dossier.assignedAttorney || 'Me. Sophie Dubois',
+      dateOpened: dossier.dateOpened || dossier.dateEnregistrementDossierDansRegistre || new Date().toISOString(),
+      lastActivity: dossier.lastActivity || new Date().toISOString(),
+      documentCount: dossier.documentCount || 0,
+      createdDate: dossier.dateEnregistrementDossierDansRegistre || dossier.dateOpened || new Date().toISOString(),
+      lastUpdate: dossier.lastActivity || new Date().toISOString(),
+      description: dossier.description || 'Description non disponible',
+      courtOfAppeal: dossier.juridiction2Instance,
+      firstInstanceTribunal: dossier.juridiction1Instance,
+      nextHearing: dossier.nextHearing
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
