@@ -227,6 +227,12 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
               // Convert LegalCase to LegalDossier for compatibility
               const dossier: LegalDossier = {
                 ...legalCase,
+                caseType: legalCase.caseType as LegalDossier['caseType'],
+                status: legalCase.status as LegalDossier['status'],
+                assignedAttorney: legalCase.assignedAttorney,
+                dateOpened: legalCase.dateOpened,
+                lastActivity: legalCase.lastActivity,
+                documentCount: legalCase.documentCount || 0,
                 typeRequete: '',
                 libEntite: '',
                 jugeRapporteur: '',

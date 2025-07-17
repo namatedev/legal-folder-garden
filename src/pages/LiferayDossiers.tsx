@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { liferayConfig, getAuthHeaders } from '../config/liferay';
+import { LIFERAY_CONFIG, getAuthHeader } from '../config/liferay';
 
 interface LiferayDossier {
   [key: string]: any;
@@ -32,10 +32,10 @@ const LiferayDossiers = () => {
       const credentials = btoa('webjuris-api-service:1234');
       
       const page: number = 1, pageSize: number = 20
-      const endpoint = `${liferayConfig.endpoints.dossiers}?page=${page}&pageSize=${pageSize}`;
+      const endpoint = `${LIFERAY_CONFIG.endpoints.dossiers}?page=${page}&pageSize=${pageSize}`;
       console.log('Fetching dossiers from:', endpoint);
       console.log('Using credentials:', credentials);
-      const baseUrl = import.meta.env.DEV ? '/api' : liferayConfig.baseUrl;
+      const baseUrl = import.meta.env.DEV ? '/api' : LIFERAY_CONFIG.baseUrl;
       const url = `${baseUrl}${endpoint}`;
       console.log('Full URL:', url);
       // const response = await fetch('/o/headless-delivery/v1.0/sites/20121/structured-contents', {
