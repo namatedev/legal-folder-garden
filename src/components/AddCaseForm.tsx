@@ -1,3 +1,4 @@
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -26,7 +27,7 @@ const formSchema = z.object({
   nomenclatureCode: z.string().min(1, 'La nomenclature est obligatoire'),
   incrementalNumber: z.string().min(1, 'Le numéro de dossier est obligatoire'),
   status: z.enum(['En cours', 'En attente', 'Terminé', 'Annulé']),
-  priority: z.enum(['Haute', 'Moyenne', 'Basse']),
+  priority: z.enum(['High', 'Medium', 'Low']),
   description: z.string().optional(),
   lawyer: z.string().min(1, 'L\'avocat responsable est obligatoire'),
   court: z.string().optional(),
@@ -47,7 +48,7 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       nomenclatureCode: '',
       incrementalNumber: '',
       status: 'En cours',
-      priority: 'Moyenne',
+      priority: 'Medium',
       description: '',
       lawyer: '',
       court: '',
@@ -90,7 +91,12 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
       firstInstanceTribunal: data.firstInstanceTribunal || undefined,
       nextHearing: data.nextHearing || undefined,
       createdDate: new Date().toISOString(),
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
+      caseType: 'Civil',
+      assignedAttorney: data.lawyer,
+      dateOpened: new Date().toISOString(),
+      lastActivity: new Date().toISOString(),
+      documentCount: 0
     };
 
     onAddCase(newCase);
@@ -280,9 +286,9 @@ const AddCaseForm = ({ onAddCase, onCancel, existingCases }: AddCaseFormProps) =
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Haute">Haute</SelectItem>
-                        <SelectItem value="Moyenne">Moyenne</SelectItem>
-                        <SelectItem value="Basse">Basse</SelectItem>
+                        <SelectItem value="High">Haute</SelectItem>
+                        <SelectItem value="Medium">Moyenne</SelectItem>
+                        <SelectItem value="Low">Basse</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
