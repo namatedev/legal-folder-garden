@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { liferayService, LiferayResponse } from '../services/liferayService';
 import { LegalDossier } from '../types/dossier';

@@ -1,3 +1,4 @@
+
 export interface LegalDossier {
   id: string;
   caseNumber: string;

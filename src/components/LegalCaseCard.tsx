@@ -1,5 +1,5 @@
 
-import { Calendar, User, FileText, AlertCircle, Trash2, Eye } from 'lucide-react';
+import { Calendar, User, FileText, AlertCircle, Trash2, Eye, Scale, Building } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,11 +14,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { LegalCase } from '@/types/legalCase';
-import { getCourtOfAppealById, getFirstInstanceTribunalById } from '@/config/courts';
+import { LegalDossier } from '@/types/dossier';
 
 interface LegalCaseCardProps {
-  legalCase: LegalCase;
+  legalCase: LegalDossier;
   onEdit: (caseId: string) => void;
   onDelete?: (caseId: string) => void;
 }
@@ -26,13 +25,13 @@ interface LegalCaseCardProps {
 const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'En cours':
+      case 'Active':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Terminé':
+      case 'Closed':
         return 'bg-green-100 text-green-800 border-green-200';
-      case 'En attente':
+      case 'Pending':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Annulé':
+      case 'On Hold':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -41,15 +40,26 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'Haute':
+      case 'High':
         return 'bg-red-50 text-red-700 border-red-200';
-      case 'Moyenne':
+      case 'Medium':
         return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'Basse':
+      case 'Low':
         return 'bg-gray-50 text-gray-700 border-gray-200';
       default:
         return 'bg-gray-50 text-gray-700 border-gray-200';
     }
+  };
+
+  // Construct case number from 2nd instance + 1st instance if exists
+  const constructCaseNumber = () => {
+    const dossier2 = legalCase.numeroCompletDossier2Instance;
+    const dossier1 = legalCase.numeroCompletDossier1Instance;
+    
+    if (dossier2 && dossier1) {
+      return `${dossier2} / ${dossier1}`;
+    }
+    return dossier2 || legalCase.caseNumber;
   };
 
   return (
@@ -69,7 +79,7 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
           </div>
         </div>
         <p className="text-sm text-gray-600 font-medium">
-          Dossier n° {legalCase.caseNumber}
+          Dossier n° {constructCaseNumber()}
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -81,28 +91,48 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-blue-600" />
+            <Scale className="h-4 w-4 text-blue-600" />
             <span className="text-sm text-gray-700">
-              <strong>Avocat:</strong> {legalCase.lawyer}
+              <strong>Juge rapporteur:</strong> {legalCase.jugeRapporteur || 'Non assigné'}
             </span>
           </div>
         </div>
         
         {/* Court Information */}
         <div className="space-y-2">
-          {legalCase.courtOfAppeal && (
-            <div className="text-sm text-gray-600">
-              <strong>Cour d'Appel:</strong> {getCourtOfAppealById(legalCase.courtOfAppeal)?.arabicName || legalCase.courtOfAppeal}
+          {legalCase.juridiction2Instance && (
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-gray-600">
+                <strong>Cour d'Appel:</strong> {legalCase.juridiction2Instance}
+              </span>
             </div>
           )}
-          {legalCase.firstInstanceTribunal && (
-            <div className="text-sm text-gray-600">
-              <strong>Tribunal de 1ère Instance:</strong> {getFirstInstanceTribunalById(legalCase.firstInstanceTribunal)?.arabicName || legalCase.firstInstanceTribunal}
+          {legalCase.juridiction1Instance && (
+            <div className="flex items-center gap-2">
+              <Building className="h-4 w-4 text-blue-600" />
+              <span className="text-sm text-gray-600">
+                <strong>Tribunal de 1ère Instance:</strong> {legalCase.juridiction1Instance}
+              </span>
             </div>
           )}
-          {legalCase.court && (
+        </div>
+
+        {/* Additional Liferay Fields */}
+        <div className="grid grid-cols-1 gap-2">
+          {legalCase.libEntite && (
             <div className="text-sm text-gray-600">
-              <strong>Tribunal:</strong> {legalCase.court}
+              <strong>Entité:</strong> {legalCase.libEntite}
+            </div>
+          )}
+          {legalCase.typeRequete && (
+            <div className="text-sm text-gray-600">
+              <strong>Type requête:</strong> {legalCase.typeRequete}
+            </div>
+          )}
+          {legalCase.libelleDernierJugemen && (
+            <div className="text-sm text-gray-600">
+              <strong>Libellé dernier jugement:</strong> {legalCase.libelleDernierJugemen}
             </div>
           )}
         </div>
@@ -123,10 +153,10 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
         <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Créé le {new Date(legalCase.createdDate).toLocaleDateString('fr-FR')}
+            Créé le {new Date(legalCase.dateOpened).toLocaleDateString('fr-FR')}
           </div>
           <div>
-            Mis à jour le {new Date(legalCase.lastUpdate).toLocaleDateString('fr-FR')}
+            Mis à jour le {new Date(legalCase.lastActivity).toLocaleDateString('fr-FR')}
           </div>
         </div>
 

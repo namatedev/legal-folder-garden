@@ -1,3 +1,4 @@
+
 import { liferayConfig, getAuthHeaders } from '../config/liferay';
 import { LegalDossier } from '../types/dossier';
 
