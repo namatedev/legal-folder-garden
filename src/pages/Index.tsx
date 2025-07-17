@@ -82,12 +82,28 @@ const Index = () => {
 
   // Convert LegalDossier to LegalCase format for LegalCaseListView
   const convertedCases = filteredDossiers.map(dossier => {
-    // Map priority to correct enum values
+    // Map priority to correct enum values - check both English and French values
     let mappedPriority: 'High' | 'Medium' | 'Low' = 'Medium';
-    if (dossier.priority === 'High' || dossier.priority === 'Haute') {
+    const priorityStr = String(dossier.priority || 'Medium').toLowerCase();
+    if (priorityStr === 'high' || priorityStr === 'haute') {
       mappedPriority = 'High';
-    } else if (dossier.priority === 'Low' || dossier.priority === 'Basse') {
+    } else if (priorityStr === 'low' || priorityStr === 'basse') {
       mappedPriority = 'Low';
+    }
+
+    // Map caseType to allowed enum values
+    let mappedCaseType: 'Civil' | 'Criminal' | 'Corporate' | 'Family' | 'Immigration' | 'Real Estate' = 'Civil';
+    const caseTypeStr = String(dossier.caseType || 'Civil').toLowerCase();
+    if (caseTypeStr.includes('criminal') || caseTypeStr.includes('pénal')) {
+      mappedCaseType = 'Criminal';
+    } else if (caseTypeStr.includes('corporate') || caseTypeStr.includes('entreprise')) {
+      mappedCaseType = 'Corporate';
+    } else if (caseTypeStr.includes('family') || caseTypeStr.includes('famille') || caseTypeStr.includes('divorce')) {
+      mappedCaseType = 'Family';
+    } else if (caseTypeStr.includes('immigration')) {
+      mappedCaseType = 'Immigration';
+    } else if (caseTypeStr.includes('real estate') || caseTypeStr.includes('immobilier')) {
+      mappedCaseType = 'Real Estate';
     }
 
     return {
@@ -98,7 +114,7 @@ const Index = () => {
       lawyer: dossier.assignedAttorney || 'Me. Sophie Dubois',
       status: dossier.status as any,
       priority: mappedPriority,
-      caseType: dossier.caseType || 'Divorce',
+      caseType: mappedCaseType,
       assignedAttorney: dossier.assignedAttorney || 'Me. Sophie Dubois',
       dateOpened: dossier.dateOpened || dossier.dateEnregistrementDossierDansRegistre || new Date().toISOString(),
       lastActivity: dossier.lastActivity || new Date().toISOString(),
