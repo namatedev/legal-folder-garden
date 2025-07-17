@@ -3,6 +3,7 @@ import { Search, Plus, Filter, Scale, Hash, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ConnectionStatus } from '@/components/ConnectionStatus';
 import { LegalCase, CaseStatus } from '@/types/legalCase';
 import LegalCaseCard from './LegalCaseCard';
 import LegalCaseListView from './LegalCaseListView';
@@ -96,6 +97,7 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
                 Nouveau dossier
               </Button>
             </div>
+            <ConnectionStatus />
           </div>
         </div>
       </div>

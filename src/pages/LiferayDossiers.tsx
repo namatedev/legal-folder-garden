@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { toast } from 'sonner';
+import { liferayConfig, getAuthHeaders } from '../config/liferay';
 
 interface LiferayDossier {
   [key: string]: any;
@@ -30,7 +31,15 @@ const LiferayDossiers = () => {
     try {
       const credentials = btoa('webjuris-api-service:1234');
       
-      const response = await fetch('https://keycloak-security.apps.ocp4.namategroup.com/o/headless-delivery/v1.0/sites/20121/structured-contents', {
+      const page: number = 1, pageSize: number = 20
+      const endpoint = `${liferayConfig.endpoints.dossiers}?page=${page}&pageSize=${pageSize}`;
+      console.log('Fetching dossiers from:', endpoint);
+      console.log('Using credentials:', credentials);
+      const baseUrl = import.meta.env.DEV ? '/api' : liferayConfig.baseUrl;
+      const url = `${baseUrl}${endpoint}`;
+      console.log('Full URL:', url);
+      // const response = await fetch('/o/headless-delivery/v1.0/sites/20121/structured-contents', {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Authorization': `Basic ${credentials}`,
@@ -63,23 +72,36 @@ const LiferayDossiers = () => {
     fetchDossiers();
   }, []);
 
-  const renderValue = (value: any): string => {
+  // Helper to check if a string is a GUID
+  const isGuid = (str: string) => {
+    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+  };
+
+  // Custom renderValue to handle numeroCompletDossier1Instance GUID case
+  const renderValue = (value: any, header?: string): string => {
+    if (header === 'numeroCompletDossier1Instance' && typeof value === 'string' && isGuid(value)) {
+      return '';
+    }
     if (value === null || value === undefined) return '-';
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
   };
 
-  const getTableHeaders = () => {
-    if (dossiers.length === 0) return [];
-    
-    // Get all unique keys from all dossiers
-    const allKeys = new Set<string>();
-    dossiers.forEach(dossier => {
-      Object.keys(dossier).forEach(key => allKeys.add(key));
-    });
-    
-    return Array.from(allKeys);
-  };
+  // List of columns to display and their friendly names
+  const displayedColumns = [
+    { key: 'typeRequete', label: 'Type requête' },
+    { key: 'libEntite', label: 'Entité' },
+    { key: 'jugeRapporteur', label: 'Juge rapporteur' },
+    { key: 'dateEnregistrementDossierDansRegistre', label: 'Date enregistrement' },
+    { key: 'juridiction2Instance', label: 'Juridiction 2e instance' },
+    { key: 'dateDernierJugement', label: 'Date dernier jugement' },
+    { key: 'juridiction1Instance', label: 'Juridiction 1re instance' },
+    { key: 'numeroCompletDossier2Instance', label: 'N° dossier 2e instance' },
+    { key: 'numeroCompletDossier1Instance', label: 'N° dossier 1re instance' },
+    { key: 'libelleDernierJugemen', label: 'Libellé dernier jugement' },
+  ];
+
+  const getTableHeaders = () => displayedColumns;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -162,22 +184,30 @@ const LiferayDossiers = () => {
             </div>
             
             <div className="overflow-x-auto">
-              <Table>
+              <Table className="min-w-full text-xs">
                 <TableHeader>
-                  <TableRow>
-                    {getTableHeaders().map((header) => (
-                      <TableHead key={header} className="text-xs font-medium">
-                        {header}
+                  <TableRow className="h-8">
+                    {getTableHeaders().map((col) => (
+                      <TableHead
+                        key={col.key}
+                        className="font-semibold px-2 py-1 whitespace-nowrap text-xs bg-gray-50"
+                        style={{ minWidth: 120 }}
+                      >
+                        {col.label}
                       </TableHead>
                     ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dossiers.map((dossier, index) => (
-                    <TableRow key={index} className="hover:bg-gray-50">
-                      {getTableHeaders().map((header) => (
-                        <TableCell key={header} className="text-sm">
-                          {renderValue(dossier[header])}
+                    <TableRow key={index} className="hover:bg-gray-50 h-8">
+                      {getTableHeaders().map((col) => (
+                        <TableCell
+                          key={col.key}
+                          className="px-2 py-1 whitespace-nowrap text-xs"
+                          style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis' }}
+                        >
+                          {renderValue(dossier[col.key], col.key)}
                         </TableCell>
                       ))}
                     </TableRow>
