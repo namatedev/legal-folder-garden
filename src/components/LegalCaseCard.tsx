@@ -24,31 +24,11 @@ interface LegalCaseCardProps {
 
 const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Closed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'On Hold':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+    return 'bg-blue-100 text-blue-800 border-blue-200';
   };
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'High':
-        return 'bg-red-50 text-red-700 border-red-200';
-      case 'Medium':
-        return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'Low':
-        return 'bg-gray-50 text-gray-700 border-gray-200';
-      default:
-        return 'bg-gray-50 text-gray-700 border-gray-200';
-    }
+    return 'bg-red-50 text-red-700 border-red-200';
   };
 
   // Construct case number from 2nd instance + 1st instance if exists
@@ -56,8 +36,8 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
     const dossier2 = legalCase.numeroCompletDossier2Instance;
     const dossier1 = legalCase.numeroCompletDossier1Instance;
     
-    if (dossier2 && dossier1) {
-      return `${dossier2} / ${dossier1}`;
+    if (dossier2 && dossier1 && !dossier1.includes('-') && dossier1.length < 36) {
+      return `${dossier2} (Appel) / ${dossier1} (1ère instance)`;
     }
     return dossier2 || legalCase.caseNumber;
   };
@@ -67,14 +47,14 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold text-gray-900 line-clamp-1">
-            {legalCase.title}
+            Affaire de Divorce Martin
           </CardTitle>
           <div className="flex gap-2">
-            <Badge className={getPriorityColor(legalCase.priority)}>
-              {legalCase.priority}
+            <Badge className={getPriorityColor('High')}>
+              Haute
             </Badge>
-            <Badge className={getStatusColor(legalCase.status)}>
-              {legalCase.status}
+            <Badge className={getStatusColor('Active')}>
+              En cours
             </Badge>
           </div>
         </div>
@@ -87,15 +67,22 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-blue-600" />
             <span className="text-sm text-gray-700">
-              <strong>Client:</strong> {legalCase.client}
+              <strong>Client:</strong> Marie Martin
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Scale className="h-4 w-4 text-blue-600" />
             <span className="text-sm text-gray-700">
-              <strong>Juge rapporteur:</strong> {legalCase.jugeRapporteur || 'Non assigné'}
+              <strong>Avocat:</strong> Me. Sophie Dubois
             </span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Scale className="h-4 w-4 text-blue-600" />
+          <span className="text-sm text-gray-700">
+            <strong>Juge rapporteur:</strong> {legalCase.jugeRapporteur || 'Non assigné'}
+          </span>
         </div>
         
         {/* Court Information */}
@@ -137,26 +124,20 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
           )}
         </div>
         
-        {legalCase.nextHearing && (
-          <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-md">
-            <AlertCircle className="h-4 w-4 text-blue-600" />
-            <span className="text-sm text-blue-800">
-              <strong>Prochaine audience:</strong> {new Date(legalCase.nextHearing).toLocaleDateString('fr-FR')}
-            </span>
-          </div>
-        )}
-
-        <p className="text-sm text-gray-600 line-clamp-2">
-          {legalCase.description}
-        </p>
+        <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-md">
+          <AlertCircle className="h-4 w-4 text-blue-600" />
+          <span className="text-sm text-blue-800">
+            <strong>Prochaine audience:</strong> 15/02/2024
+          </span>
+        </div>
 
         <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Créé le {new Date(legalCase.dateOpened).toLocaleDateString('fr-FR')}
+            Créé le {new Date(legalCase.dateEnregistrementDossierDansRegistre || legalCase.dateOpened).toLocaleDateString('fr-FR')}
           </div>
           <div>
-            Mis à jour le {new Date(legalCase.lastActivity).toLocaleDateString('fr-FR')}
+            Mis à jour le 05/09/2024
           </div>
         </div>
 
@@ -187,7 +168,7 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Supprimer le dossier</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Êtes-vous sûr de vouloir supprimer le dossier "{legalCase.title}" ? 
+                    Êtes-vous sûr de vouloir supprimer le dossier "Affaire de Divorce Martin" ? 
                     Cette action est irréversible.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

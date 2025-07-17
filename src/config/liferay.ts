@@ -1,40 +1,17 @@
 
-// Liferay Configuration
-export const liferayConfig = {
-  // Update these values for your Liferay instance
-  baseUrl: import.meta.env.VITE_REACT_APP_LIFERAY_BASE_URL || 'https://keycloak-security.apps.ocp4.namategroup.com',
-  objectApiPath: '/o/c/dossiers', // Updated to match your object name
-  username: import.meta.env.VITE_REACT_APP_LIFERAY_USERNAME || 'webjuris-api-service',
-  password: import.meta.env.VITE_REACT_APP_LIFERAY_PASSWORD || '1234',
-  
-  // Alternative: Use OAuth token instead of basic auth
-  // oauthToken: import.meta.env.VITE_REACT_APP_LIFERAY_OAUTH_TOKEN,
-  
-  // API endpoints
+export const LIFERAY_CONFIG = {
+  baseUrl: process.env.VITE_LIFERAY_BASE_URL || 'https://keycloak-security.apps.ocp4.namategroup.com',
+  objectApiPath: '/o/c/dossiertribunals',
+  username: process.env.VITE_LIFERAY_USERNAME || 'webjuris-api-service',
+  password: process.env.VITE_LIFERAY_PASSWORD || '1234',
   endpoints: {
-    dossiers: '/o/c/dossiers',
-    search: '/o/c/dossiers?search=',
-    filter: '/o/c/dossiers?filter=',
+    dossiers: '/o/c/dossiertribunals',
+    search: '/o/c/dossiertribunals',
+    filter: '/o/c/dossiertribunals'
   }
 };
 
-// Headers for API requests
-export const getAuthHeaders = () => {
-  const { username, password } = liferayConfig;
-  const basicAuth = btoa(`${username}:${password}`);
-  
-  return {
-    'Authorization': `Basic ${basicAuth}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
-};
-
-// Alternative OAuth headers
-export const getOAuthHeaders = () => {
-  return {
-    'Authorization': `Bearer ${liferayConfig.oauthToken}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
+export const getAuthHeader = () => {
+  const credentials = btoa(`${LIFERAY_CONFIG.username}:${LIFERAY_CONFIG.password}`);
+  return `Basic ${credentials}`;
 };

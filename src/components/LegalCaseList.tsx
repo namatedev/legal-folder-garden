@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ConnectionStatus } from '@/components/ConnectionStatus';
 import { LegalCase, CaseStatus } from '@/types/legalCase';
+import { LegalDossier } from '@/types/dossier';
 import LegalCaseCard from './LegalCaseCard';
 import LegalCaseListView from './LegalCaseListView';
 import AddCaseForm from './AddCaseForm';
@@ -222,14 +223,31 @@ const LegalCaseList = ({ cases, onAddCase, onEditCase, onDeleteCase }: LegalCase
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCases.map((legalCase) => (
-              <LegalCaseCard
-                key={legalCase.id}
-                legalCase={legalCase}
-                onEdit={onEditCase}
-                onDelete={onDeleteCase}
-              />
-            ))}
+            {filteredCases.map((legalCase) => {
+              // Convert LegalCase to LegalDossier for compatibility
+              const dossier: LegalDossier = {
+                ...legalCase,
+                typeRequete: '',
+                libEntite: '',
+                jugeRapporteur: '',
+                dateEnregistrementDossierDansRegistre: legalCase.dateOpened,
+                juridiction2Instance: '',
+                dateDernierJugement: '',
+                juridiction1Instance: '',
+                numeroCompletDossier2Instance: legalCase.caseNumber,
+                numeroCompletDossier1Instance: '',
+                libelleDernierJugemen: ''
+              };
+              
+              return (
+                <LegalCaseCard
+                  key={legalCase.id}
+                  legalCase={dossier}
+                  onEdit={onEditCase}
+                  onDelete={onDeleteCase}
+                />
+              );
+            })}
           </div>
         ) : (
           <LegalCaseListView 
