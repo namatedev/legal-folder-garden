@@ -192,10 +192,11 @@ class LiferayService {
           
           if (sortedDecisions.length > 0) {
             const decision = sortedDecisions[0];
+            const convertedDecisionDate = convertDateFromLiferay(decision.dateTimeDecision);
             lastDecision = {
               content: decision.contenuDecision || 'Contenu non disponible',
               type: decision.typeDecision || 'Type non disponible',
-              date: new Date(decision.dateTimeDecision).toLocaleDateString('fr-FR')
+              date: new Date(convertedDecisionDate).toLocaleDateString('fr-FR')
             };
           }
         }
