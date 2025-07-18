@@ -64,7 +64,7 @@ const LegalCaseListView = ({ cases, onEdit, onDelete }: LegalCaseListViewProps) 
         <TableHeader>
           <TableRow className="h-10">
             <TableHead className="py-2 px-3 text-xs font-medium">Dossier</TableHead>
-            <TableHead className="py-2 px-3 text-xs font-medium">Client</TableHead>
+            <TableHead className="py-2 px-3 text-xs font-medium">Parties</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Avocat</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Cour d'Appel</TableHead>
             <TableHead className="py-2 px-3 text-xs font-medium">Statut</TableHead>

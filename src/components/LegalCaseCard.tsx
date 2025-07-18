@@ -67,7 +67,7 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-blue-600" />
             <span className="text-sm text-gray-700">
-              <strong>Client:</strong> Marie Martin
+              <strong>Parties:</strong> {legalCase.client}
             </span>
           </div>
           <div className="flex items-center gap-2">

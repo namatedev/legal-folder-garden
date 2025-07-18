@@ -68,6 +68,32 @@ class LiferayService {
     }
   }
 
+  async getRelatedParties(dossierId: string): Promise<any[]> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/o/c/dossiers/${dossierId}/relatedParties`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': this.authHeader,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        return [];
+      }
+
+      const data = await response.json();
+      return data.items || [];
+    } catch (error) {
+      console.error('Error fetching related parties:', error);
+      return [];
+    }
+  }
+
   async getDossiers(page: number = 1, pageSize: number = 20): Promise<LiferayResponse<LegalDossier>> {
     try {
       const response = await fetch(
@@ -89,7 +115,7 @@ class LiferayService {
       const data = await response.json();
       
       // Transform the data to match our interface
-      const transformedItems = (data.items || []).map((item: any) => {
+      const transformedItems = await Promise.all((data.items || []).map(async (item: any) => {
         console.log('🗓️ Processing dates for dossier:', item.id, {
           dateEnregistrementDossierDansRegistre: item.dateEnregistrementDossierDansRegistre,
           dateDernierJugement: item.dateDernierJugement
@@ -103,11 +129,23 @@ class LiferayService {
           converted: convertedDateEnregistrement
         });
 
+        // Fetch related parties
+        const relatedParties = await this.getRelatedParties(item.id);
+        
+        // Format parties as "name1 (role1) vs name2 (role2)"
+        let partiesString = 'Parties non disponibles';
+        if (relatedParties.length > 0) {
+          const formattedParties = relatedParties.map(party => 
+            `${party.nomPrenomPartie || 'Nom inconnu'} (${party.rolePartie || 'Rôle inconnu'})`
+          );
+          partiesString = formattedParties.join(' vs ');
+        }
+
         return {
           id: item.id?.toString() || Math.random().toString(),
           caseNumber: item.numeroCompletDossier2Instance || 'N/A',
           title: 'Affaire de Divorce Martin', // Hardcoded as requested
-          client: 'Marie Martin', // Hardcoded as requested
+          client: partiesString,
           caseType: 'Family' as const,
           status: 'Active' as const,
           assignedAttorney: 'Me. Sophie Dubois', // Hardcoded as requested
@@ -131,7 +169,7 @@ class LiferayService {
           numeroCompletDossier1Instance: item.numeroCompletDossier1Instance || '',
           libelleDernierJugemen: item.libelleDernierJugemen || ''
         };
-      });
+      }));
 
       return {
         items: transformedItems,
