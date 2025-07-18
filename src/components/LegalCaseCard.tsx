@@ -127,9 +127,27 @@ const LegalCaseCard = ({ legalCase, onEdit, onDelete }: LegalCaseCardProps) => {
         <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-md">
           <AlertCircle className="h-4 w-4 text-blue-600" />
           <span className="text-sm text-blue-800">
-            <strong>Prochaine audience:</strong> 15/02/2024
+            <strong>Prochaine audience:</strong> {legalCase.nextHearing}
           </span>
         </div>
+
+        {/* Last Decision */}
+        {legalCase.lastDecision && (
+          <div className="bg-gray-50 p-3 rounded-md border">
+            <div className="flex items-center gap-2 mb-2">
+              <FileText className="h-4 w-4 text-gray-600" />
+              <span className="text-sm font-semibold text-gray-800">
+                Dernière décision ({legalCase.lastDecision.date})
+              </span>
+            </div>
+            <div className="text-sm text-gray-700 mb-1">
+              <strong>Type:</strong> {legalCase.lastDecision.type}
+            </div>
+            <div className="text-sm text-gray-600 line-clamp-2">
+              <strong>Contenu:</strong> {legalCase.lastDecision.content}
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
           <div className="flex items-center gap-1">

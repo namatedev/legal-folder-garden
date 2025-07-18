@@ -14,6 +14,11 @@ export interface LegalDossier {
   documentCount: number;
   nextHearing?: string;
   estimatedValue?: string;
+  lastDecision?: {
+    content: string;
+    type: string;
+    date: string;
+  };
   
   // Additional Liferay fields
   typeRequete: string;

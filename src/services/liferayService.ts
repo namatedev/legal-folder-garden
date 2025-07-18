@@ -94,6 +94,32 @@ class LiferayService {
     }
   }
 
+  async getRelatedDecisions(dossierId: string): Promise<any[]> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/o/c/dossiers/${dossierId}/relatedDecisions`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': this.authHeader,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        return [];
+      }
+
+      const data = await response.json();
+      return data.items || [];
+    } catch (error) {
+      console.error('Error fetching related decisions:', error);
+      return [];
+    }
+  }
+
   async getDossiers(page: number = 1, pageSize: number = 20): Promise<LiferayResponse<LegalDossier>> {
     try {
       const response = await fetch(
@@ -129,8 +155,11 @@ class LiferayService {
           converted: convertedDateEnregistrement
         });
 
-        // Fetch related parties
-        const relatedParties = await this.getRelatedParties(item.id);
+        // Fetch related parties and decisions
+        const [relatedParties, relatedDecisions] = await Promise.all([
+          this.getRelatedParties(item.id),
+          this.getRelatedDecisions(item.id)
+        ]);
         
         // Format parties as "name1 (role1) vs name2 (role2)"
         let partiesString = 'Parties non disponibles';
@@ -139,6 +168,36 @@ class LiferayService {
             `${party.nomPrenomPartie || 'Nom inconnu'} (${party.rolePartie || 'Rôle inconnu'})`
           );
           partiesString = formattedParties.join(' vs ');
+        }
+
+        // Process decisions to get next hearing and last decision
+        let nextHearing = '';
+        let lastDecision = null;
+        
+        if (relatedDecisions.length > 0) {
+          // Find the next hearing date from dateTimeNextAudience
+          const decisionsWithNextAudience = relatedDecisions
+            .filter(decision => decision.dateTimeNextAudience)
+            .sort((a, b) => new Date(a.dateTimeNextAudience).getTime() - new Date(b.dateTimeNextAudience).getTime());
+          
+          if (decisionsWithNextAudience.length > 0) {
+            const nextAudienceDate = new Date(decisionsWithNextAudience[0].dateTimeNextAudience);
+            nextHearing = nextAudienceDate.toLocaleDateString('fr-FR');
+          }
+
+          // Get the last decision (most recent by dateTimeDecision)
+          const sortedDecisions = relatedDecisions
+            .filter(decision => decision.dateTimeDecision)
+            .sort((a, b) => new Date(b.dateTimeDecision).getTime() - new Date(a.dateTimeDecision).getTime());
+          
+          if (sortedDecisions.length > 0) {
+            const decision = sortedDecisions[0];
+            lastDecision = {
+              content: decision.contenuDecision || 'Contenu non disponible',
+              type: decision.typeDecision || 'Type non disponible',
+              date: new Date(decision.dateTimeDecision).toLocaleDateString('fr-FR')
+            };
+          }
         }
 
         return {
@@ -154,8 +213,9 @@ class LiferayService {
           priority: 'High' as const,
           description: item.description || 'Description non disponible',
           documentCount: 0,
-          nextHearing: '2024-02-15', // Hardcoded as requested
+          nextHearing: nextHearing || 'Aucune audience programmée',
           estimatedValue: item.estimatedValue,
+          lastDecision: lastDecision,
           
           // Liferay specific fields
           typeRequete: item.typeRequete || '',
