@@ -181,7 +181,8 @@ class LiferayService {
             .sort((a, b) => new Date(a.dateTimeNextAudience).getTime() - new Date(b.dateTimeNextAudience).getTime());
           
           if (decisionsWithNextAudience.length > 0) {
-            const nextAudienceDate = new Date(decisionsWithNextAudience[0].dateTimeNextAudience);
+            const convertedNextAudienceDate = convertDateFromLiferay(decisionsWithNextAudience[0].dateTimeNextAudience);
+            const nextAudienceDate = new Date(convertedNextAudienceDate);
             nextHearing = nextAudienceDate.toLocaleDateString('fr-FR');
           }
 
